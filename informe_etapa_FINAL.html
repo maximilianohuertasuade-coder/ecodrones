@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoDrones — Documento Final</title>
+    <style>
+        :root { --primary: #1a3a5c; --secondary: #2e7d32; --accent: #c62828; --bg: #fdfdfd; --text: #212121; --text-light: #616161; --border: #e0e0e0; --highlight: #e3f2fd; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: var(--bg); color: var(--text); line-height: 1.85; padding: 50px 20px; font-size: 15px; }
+        .container { max-width: 980px; margin: 0 auto; }
+        .cover { text-align: center; padding: 70px 40px; border: 3px solid var(--primary); border-radius: 4px; margin-bottom: 50px; }
+        .cover h1 { font-size: 2.2em; color: var(--primary); margin-bottom: 8px; }
+        .cover h2 { font-size: 1.3em; color: var(--text-light); font-weight: normal; margin-bottom: 24px; }
+        .cover .sub { font-size: 1em; color: var(--text-light); margin-bottom: 6px; }
+        .cover .inst { margin-top: 40px; font-size: 0.95em; color: #888; }
+        .section { margin-bottom: 45px; }
+        .section h2 { font-size: 1.4em; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 20px; }
+        .section h3 { font-size: 1.1em; color: #37474f; margin: 22px 0 10px 0; }
+        .section h4 { font-size: 1em; color: #455a64; margin: 16px 0 8px 0; }
+        p { margin-bottom: 12px; text-align: justify; }
+        ul, ol { padding-left: 28px; margin-bottom: 14px; }
+        li { margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 20px 0; font-size: 0.92em; font-family: 'Segoe UI', sans-serif; }
+        th, td { padding: 10px 14px; text-align: left; border: 1px solid var(--border); }
+        th { background: #f5f7fa; color: var(--primary); font-weight: 600; }
+        tr:nth-child(even) { background: #fafbfc; }
+        .diagram { background: #1a1a2e; color: #e0e0e0; border-radius: 6px; padding: 24px; margin: 18px 0; font-family: 'Courier New', monospace; font-size: 0.8em; line-height: 1.5; overflow-x: auto; white-space: pre; }
+        .diagram-cap { font-style: italic; font-size: 0.9em; color: var(--text-light); margin-top: -10px; margin-bottom: 18px; text-align: center; }
+        .json-block { background: #263238; color: #eeffff; border-radius: 6px; padding: 18px; margin: 14px 0; font-family: 'Courier New', monospace; font-size: 0.84em; line-height: 1.5; overflow-x: auto; }
+        .box-info { background: var(--highlight); border-left: 4px solid #1565c0; padding: 16px 20px; margin: 16px 0; border-radius: 0 6px 6px 0; }
+        .box-warn { background: #fff8e1; border-left: 4px solid #f9a825; padding: 16px 20px; margin: 16px 0; border-radius: 0 6px 6px 0; }
+        .box-ok { background: #e8f5e9; border-left: 4px solid var(--secondary); padding: 16px 20px; margin: 16px 0; border-radius: 0 6px 6px 0; }
+        .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .col-card { background: #f8f9fa; border: 1px solid var(--border); border-radius: 6px; padding: 18px; }
+        .col-card h4 { color: var(--primary); margin-bottom: 10px; }
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-family: 'Segoe UI', sans-serif; font-weight: 500; }
+        .tag-g { background: #e8f5e9; color: #2e7d32; } .tag-b { background: #e3f2fd; color: #1565c0; }
+        .tag-o { background: #fff3e0; color: #e65100; } .tag-r { background: #fce4ec; color: #c62828; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        footer { text-align: center; padding: 40px 20px; border-top: 2px solid var(--border); margin-top: 50px; color: var(--text-light); font-size: 0.9em; }
+        @media (max-width: 768px) { .two-cols { grid-template-columns: 1fr; } body { padding: 20px 12px; } }
+        @media print { body { padding: 0; font-size: 12px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- ══════════ PORTADA ══════════ -->
+    <div class="cover">
+        <h1>EcoDrones</h1>
+        <h2>Sistema de Monitoreo Ambiental con Drones</h2>
+        <p class="sub">Detección Temprana de Focos Ígneos y Protección de Biodiversidad</p>
+        <p class="sub">Capilla del Monte / Cerro Uritorco — Córdoba, Argentina</p>
+        <br>
+        <p class="sub"><strong>Documento Final — Etapa Final</strong></p>
+        <p class="sub">Bases de Datos II — Ingeniería de Datos</p>
+        <div class="inst">
+            <p><strong>Universidad Argentina De la Empresa</strong></p>
+            <p>Materia: Ingeniería de Datos 2</p>
+            <p>Profesor: Fernández Alfonso Martín</p>
+            <p style="margin-top: 10px;">Integrantes: Piña Matias, Vazquez Luciana, Micheli Alejo Gonzalo,<br>Lambert Theo, Huertas Maximiliano Ivan, D'Elia Tomas</p>
+            <p>Fecha de entrega: Junio 2026</p>
+        </div>
+    </div>
+
+    <!-- ══════════ ÍNDICE ══════════ -->
+    <div class="section">
+        <h2>Índice</h2>
+        <ol>
+            <li>Executive Summary (Resumen Ejecutivo)</li>
+            <li>Introducción</li>
+            <li>Misión, Visión, Objetivo Estratégico y Plan de Acción</li>
+            <li>Análisis Interno y Externo de la Empresa (FODA)</li>
+            <li>Entregables de la Etapa I: Presentación de la Organización</li>
+            <li>Arquitectura Implementada y Funcionalidades Desarrolladas</li>
+            <li>Entregables de la Etapa II: Configuración y Gobernanza</li>
+            <li>Entregables de la Etapa Final: Desarrollo Seguro de Software</li>
+            <li>Conclusión y Recomendaciones</li>
+        </ol>
+    </div>
+    <!-- ══════════ 1. EXECUTIVE SUMMARY ══════════ -->
+    <div class="section">
+        <h2>1. Executive Summary (Resumen Ejecutivo)</h2>
+        <p>La región serrana de Capilla del Monte, Córdoba, enfrenta de manera recurrente la amenaza de incendios forestales que ponen en riesgo tanto la biodiversidad local —con especies catalogadas como Vulnerables y Casi Amenazadas por la IUCN— como la seguridad de las comunidades aledañas. Los mecanismos de detección actuales, basados en vigías humanos y alertas satelitales con resolución de horas, resultan insuficientes para garantizar una respuesta oportuna.</p>
+        <p>Ante esta problemática, el equipo de IT propone <strong>EcoDrones</strong>: una plataforma de vigilancia ambiental autónoma que integra una flota de tres drones equipados con sensores ambientales, dos bases de datos NoSQL complementarias y un dashboard táctico de visualización en tiempo real.</p>
+        <p>La solución implementada permite detectar anomalías térmicas en menos de un segundo, predecir la dirección de propagación del fuego según el vector de viento mediante análisis de grafos, e identificar automáticamente qué especies de fauna se encuentran en la línea de peligro, todo sin intervención humana.</p>
+        <p>El impacto esperado incluye: reducción del tiempo de detección de horas a segundos, mejora en la coordinación de respuesta ante emergencias con información accionable inmediata, generación de datos históricos para optimización de operaciones futuras, y posicionamiento de la organización como referente en monitoreo ambiental inteligente en la región.</p>
+        <p>La arquitectura se sustenta en MongoDB como motor de ingestión masiva de telemetría IoT y Neo4j como motor de análisis relacional del ecosistema, integrados bidireccionalmente para que cada alerta se enriquezca con análisis ecológico de impacto sin intervención manual. El desarrollo seguro de la solución contempla validación de datos, gestión de accesos y protección contra inyección, garantizando la integridad del sistema.</p>
+    </div>
+
+    <!-- ══════════ 2. INTRODUCCIÓN ══════════ -->
+    <div class="section">
+        <h2>2. Introducción</h2>
+        <h3>2.1 La Organización</h3>
+        <p>EcoDrones es una organización dedicada a la vigilancia ambiental mediante tecnología de drones autónomos. Su actividad principal es el monitoreo continuo de áreas naturales de alto valor ecológico, proporcionando información en tiempo real a operadores de emergencia, organismos ambientales y comunidades locales.</p>
+        <p>Opera en la zona de Capilla del Monte y el Cerro Uritorco, una región de las sierras cordobesas que combina vegetación de monte, cañadones secos, zonas de embalse y cumbres de altura, conformando un ecosistema diverso pero altamente vulnerable a incendios forestales estacionales.</p>
+
+        <h3>2.2 Situación Actual y Problemática</h3>
+        <p>La organización enfrenta las siguientes limitaciones críticas en su operación:</p>
+        <ul>
+            <li><strong>Detección tardía:</strong> Los métodos tradicionales tienen latencias de minutos a horas; un foco puede volverse incontrolable en ese lapso.</li>
+            <li><strong>Ausencia de predicción:</strong> No existe un sistema que anticipe hacia dónde avanzará el fuego según condiciones meteorológicas actuales.</li>
+            <li><strong>Datos desconectados:</strong> La información biológica, geográfica y meteorológica se gestiona en silos sin integración.</li>
+            <li><strong>Falta de trazabilidad:</strong> No hay registro histórico que vincule eventos de incendio con impacto ecológico.</li>
+        </ul>
+
+        <h3>2.3 Rol del Equipo de IT</h3>
+        <p>El equipo asume el rol de diseñar, implementar y documentar una solución integral de ingeniería de datos que transforme telemetría cruda en inteligencia operativa accionable. Esto abarca la selección de tecnologías, el diseño de modelos de datos, la implementación de la integración entre sistemas, la validación de resultados, y la definición de prácticas de gobernanza, configuración y desarrollo seguro de software.</p>
+    </div>
+    <!-- ══════════ 3. MISIÓN, VISIÓN, OBJETIVO ESTRATÉGICO ══════════ -->
+    <div class="section">
+        <h2>3. Misión, Visión, Objetivo Estratégico y Plan de Acción</h2>
+
+        <h3>3.1 Misión</h3>
+        <p>Proteger la biodiversidad y las comunidades de las sierras cordobesas mediante tecnología de monitoreo ambiental autónomo, proporcionando detección temprana de amenazas y análisis predictivo que permita una respuesta efectiva ante emergencias climáticas.</p>
+
+        <h3>3.2 Visión</h3>
+        <p>Ser la plataforma de referencia en vigilancia ambiental inteligente en Argentina, integrando tecnología de drones, inteligencia de datos y análisis ecológico para construir un futuro donde la prevención reemplace a la reacción ante incendios forestales.</p>
+
+        <h3>3.3 Objetivo Estratégico</h3>
+        <p>Implementar una solución de ingeniería de datos basada en arquitectura políglota NoSQL que permita reducir el tiempo de detección de incendios de horas a menos de un segundo, habilitando la predicción automática de propagación y la identificación de fauna en riesgo para mejorar la capacidad de respuesta de la organización en un 90%.</p>
+
+        <h3>3.4 Plan de Acción</h3>
+        <table>
+            <thead><tr><th>Fase</th><th>Iniciativa</th><th>Resultado Esperado</th></tr></thead>
+            <tbody>
+                <tr><td>Fase 1</td><td>Diseño conceptual de la solución (Etapa I)</td><td>Arquitectura definida, modelos NoSQL seleccionados, patrones de consulta identificados</td></tr>
+                <tr><td>Fase 2</td><td>Implementación y validación (Etapa Final)</td><td>Sistema funcional con detección, análisis y visualización en tiempo real</td></tr>
+                <tr><td>Fase 3</td><td>Definición de gobernanza y seguridad</td><td>Políticas de configuración, control de cambios, desarrollo seguro implementados</td></tr>
+                <tr><td>Fase 4</td><td>Despliegue piloto y ajuste</td><td>Validación en campo con drones reales, calibración de umbrales</td></tr>
+                <tr><td>Fase 5</td><td>Escalamiento y mejora continua</td><td>Incorporación de más zonas, especies y fuentes de datos meteorológicas</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ══════════ 4. ANÁLISIS FODA ══════════ -->
+    <div class="section">
+        <h2>4. Análisis Interno y Externo de la Empresa (FODA)</h2>
+
+        <h3>4.1 Análisis Interno</h3>
+        <div class="two-cols">
+            <div class="col-card">
+                <h4>💪 Fortalezas</h4>
+                <ul>
+                    <li>Equipo técnico con conocimientos en bases de datos NoSQL, Python y Docker.</li>
+                    <li>Arquitectura políglota que aprovecha las fortalezas naturales de cada tecnología.</li>
+                    <li>Sistema modular: cada componente puede evolucionar independientemente.</li>
+                    <li>Infraestructura containerizada que garantiza reproducibilidad y portabilidad.</li>
+                    <li>Integración bidireccional MongoDB-Neo4j sin middleware externo.</li>
+                    <li>Datos generados con modelo físico realista (no datos aleatorios triviales).</li>
+                </ul>
+            </div>
+            <div class="col-card">
+                <h4>⚠️ Debilidades</h4>
+                <ul>
+                    <li>Dependencia de simulación: no se cuenta con drones ni sensores físicos reales.</li>
+                    <li>Foco único y estático en la simulación (ZONA_003 permanente).</li>
+                    <li>Ausencia de autenticación y gestión de roles en el dashboard.</li>
+                    <li>Sin pruebas de carga formal en entornos distribuidos.</li>
+                    <li>Propagación unidimensional (solo dirección cardinal, no abanico).</li>
+                    <li>Sin job automático de poda de nodos antiguos en Neo4j.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>4.2 Análisis Externo</h3>
+        <div class="two-cols">
+            <div class="col-card">
+                <h4>🚀 Oportunidades</h4>
+                <ul>
+                    <li>Creciente demanda de soluciones de monitoreo ambiental por cambio climático.</li>
+                    <li>Legislación argentina que exige planes de prevención de incendios (Ley 26.815).</li>
+                    <li>Disponibilidad de APIs meteorológicas públicas para datos en tiempo real.</li>
+                    <li>Reducción de costos de hardware de drones y sensores IoT.</li>
+                    <li>Interés de municipios y parques nacionales en tecnología de prevención.</li>
+                    <li>Tendencia global hacia Smart Cities y monitoreo inteligente.</li>
+                </ul>
+            </div>
+            <div class="col-card">
+                <h4>🔴 Amenazas</h4>
+                <ul>
+                    <li>Regulación de espacio aéreo para drones (ANAC) puede limitar operaciones.</li>
+                    <li>Condiciones climáticas extremas (vientos fuertes) que impidan vuelo de drones.</li>
+                    <li>Competencia de empresas con soluciones satelitales de mayor cobertura.</li>
+                    <li>Dependencia de conectividad en zonas serranas con cobertura limitada.</li>
+                    <li>Riesgo de obsolescencia tecnológica si no se mantiene actualización continua.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- ══════════ 5. ENTREGABLES ETAPA I ══════════ -->
+    <div class="section">
+        <h2>5. Entregables de la Etapa I: Presentación de la Organización</h2>
+
+        <h3>5.1 Propuestas de Empresas Analizadas</h3>
+        <p>Durante la Etapa 0/I se evaluaron dos propuestas de caso:</p>
+        <div class="two-cols">
+            <div class="col-card">
+                <h4>Propuesta A: EcoDrones (Seleccionada)</h4>
+                <p>Sistema de monitoreo ambiental con drones para detección de incendios en Capilla del Monte. Combina telemetría IoT de alta frecuencia con análisis de grafos para predicción de propagación.</p>
+                <p><strong>Ventaja:</strong> Permite integrar naturalmente un modelo documental (telemetría masiva) con un modelo de grafos (relaciones ecológicas), demostrando la arquitectura políglota NoSQL.</p>
+            </div>
+            <div class="col-card">
+                <h4>Propuesta B: Sistema de Logística Urbana</h4>
+                <p>Plataforma de optimización de rutas de entrega en tiempo real para empresas de e-commerce.</p>
+                <p><strong>Razón de descarte:</strong> Si bien permitía usar grafos para rutas, el componente documental se limitaba a logs simples sin la riqueza de datos embebidos que ofrece el caso ambiental.</p>
+            </div>
+        </div>
+
+        <h3>5.2 Justificación de la Selección</h3>
+        <p>EcoDrones fue seleccionado porque presenta una necesidad genuina de dos modelos NoSQL diferentes con integración real entre ellos: la telemetría IoT exige un modelo documental de alta velocidad de escritura, mientras que la predicción de propagación requiere traversals de grafos con atributos en relaciones. Esta dualidad permite demostrar que la arquitectura políglota no es una elección arbitraria sino una consecuencia directa de la naturaleza del problema.</p>
+
+        <h3>5.3 Aportes del Equipo de IT</h3>
+        <table>
+            <thead><tr><th>Área</th><th>Aporte</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Operaciones de Software</strong></td><td>Orquestación con Docker (iniciar_servicios.bat / detener_servicios.bat) que levanta toda la infraestructura con un solo comando. Procesos Python ejecutándose como servicios concurrentes.</td></tr>
+                <tr><td><strong>Tercerización</strong></td><td>Las bases de datos corren en contenedores oficiales de Docker Hub (mongo:latest, neo4j:latest), delegando el mantenimiento de los motores a sus proveedores. El equipo se enfoca en la lógica de negocio.</td></tr>
+                <tr><td><strong>Gestión de Configuraciones</strong></td><td>Variables de conexión centralizadas (URIs, credenciales). Estructura del grafo versionada en cargar_neo4j.py como código fuente. Parámetros de simulación documentados.</td></tr>
+                <tr><td><strong>Gobernanza</strong></td><td>Separación clara de responsabilidades: simulador genera datos, monitor analiza, dashboard presenta. Cada componente tiene un único propósito definido.</td></tr>
+                <tr><td><strong>Desarrollo Seguro</strong></td><td>Uso de consultas parametrizadas en Cypher (parámetros $zona, $drone_id). Validación de rangos de coordenadas en el simulador. Manejo de excepciones con finally para liberación de recursos.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- ══════════ 5B. IMPLEMENTACIÓN TÉCNICA FINAL ══════════ -->
+    <div class="section">
+        <h2>5B. Arquitectura Implementada y Funcionalidades Desarrolladas</h2>
+
+        <p>Esta sección documenta las funcionalidades efectivamente implementadas en la etapa final, incluyendo los ajustes y mejoras realizados respecto al diseño conceptual de la Etapa I.</p>
+
+        <h3>5B.1 Flota de Drones con Sensores Diferenciados</h3>
+        <p>Una de las decisiones de implementación más relevantes fue dotar a cada dron de un conjunto de sensores distinto, demostrando la capacidad de <strong>esquema flexible</strong> del modelo documental de MongoDB. Los tres drones coexisten en la misma colección <code>telemetria</code> con documentos de estructura diferente, sin necesidad de migraciones de esquema ni columnas con valores nulos:</p>
+
+        <table>
+            <thead><tr><th>Dron</th><th>Modelo Hardware</th><th>Sensores Base</th><th>Sensores Exclusivos</th></tr></thead>
+            <tbody>
+                <tr><td><strong>DRON_ALPHA</strong></td><td>Hexacopter-V2-Eco</td><td>Temperatura, CO₂, Humedad, Viento</td><td>—</td></tr>
+                <tr><td><strong>DRON_BETA</strong></td><td>Hexacopter-V3-Pro</td><td>Temperatura, CO₂, Humedad, Viento</td><td>Radiación UV (índice), Presión Atmosférica (hPa)</td></tr>
+                <tr><td><strong>DRON_GAMMA</strong></td><td>Quadcopter-X1-Scout</td><td>Temperatura, CO₂, Humedad, Viento</td><td>Luminosidad (lux), Partículas PM2.5 (μg/m³)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box-info">
+            <p><strong>Valor demostrativo:</strong> En una base de datos relacional, agregar un sensor nuevo requiere alterar la tabla (ALTER TABLE) o crear tablas adicionales. En MongoDB, el simulador simplemente incluye campos extra en el documento sin afectar a los demás drones. El dashboard detecta dinámicamente qué campos existen y los muestra automáticamente.</p>
+        </div>
+
+        <h3>5B.2 Ecosistema Ampliado: 7 Especies Autóctonas</h3>
+        <p>El grafo de Neo4j fue enriquecido con 7 especies autóctonas de las sierras de Córdoba, todas verificables en registros de la IUCN. La distribución garantiza que toda zona tiene fauna asignada, lo que enriquece el análisis de impacto ante cualquier dirección de propagación:</p>
+
+        <table>
+            <thead><tr><th>Especie</th><th>Nombre Científico</th><th>IUCN</th><th>Zonas</th></tr></thead>
+            <tbody>
+                <tr><td>Lobito de Río</td><td><em>Lontra longicaudis</em></td><td>NT</td><td>Z2, Z3</td></tr>
+                <tr><td>Puma</td><td><em>Puma concolor</em></td><td>LC</td><td>Z3, Z4</td></tr>
+                <tr><td>Zorro Gris</td><td><em>Lycalopex gymnocercus</em></td><td>LC</td><td>Z1</td></tr>
+                <tr><td>Cóndor Andino</td><td><em>Vultur gryphus</em></td><td>VU</td><td>Z5, Z6</td></tr>
+                <tr><td>Vizcacha Serrana</td><td><em>Lagidium viscacia</em></td><td>LC</td><td>Z1, Z6</td></tr>
+                <tr><td>Lagarto Overo</td><td><em>Salvator merianae</em></td><td>LC</td><td>Z4, Z5</td></tr>
+                <tr><td>Remolinera Serrana</td><td><em>Cinclodes comechingonus</em></td><td>NT</td><td>Z5, Z6</td></tr>
+            </tbody>
+        </table>
+
+        <p>La Remolinera Serrana es particularmente significativa por ser <strong>endémica de las sierras de Córdoba</strong> — no existe en ningún otro lugar del mundo, lo que refuerza la importancia del sistema de protección.</p>
+
+        <h3>5B.3 Dashboard Táctico: 4 Pestañas Funcionales</h3>
+        <table>
+            <thead><tr><th>Pestaña</th><th>Función</th><th>Fuente de Datos</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Monitoreo</strong></td><td>Tarjetas por dron con sensores en vivo. Cada tarjeta muestra los sensores que su dron posee (esquema flexible visible).</td><td>MongoDB (telemetria)</td></tr>
+                <tr><td><strong>Alertas</strong></td><td>Listado cronológico de incendios detectados con análisis de impacto embebido (fauna + propagación).</td><td>MongoDB (alertas_disparadas)</td></tr>
+                <tr><td><strong>Mapa Operativo</strong></td><td>Mapa satelital con posiciones GPS de los drones, iconos de fuego/humo en zona activa, etiquetas de zona.</td><td>MongoDB (telemetria)</td></tr>
+                <tr><td><strong>🔥 Propagación</strong></td><td>Mapa de riesgo en tiempo real (grilla coloreada), fauna en peligro, predicción de cascada, panel de acciones de respuesta recomendadas.</td><td>MongoDB + Neo4j (integración en vivo)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>5B.4 Análisis de Propagación con Acciones de Respuesta</h3>
+        <p>La pestaña de Propagación implementa la consulta Cypher más compleja del sistema (traversal de 2 saltos con filtro por dirección de viento) y presenta los resultados de forma accionable:</p>
+        <ul>
+            <li><strong>Mapa de riesgo visual:</strong> Grilla 3×2 que se colorea en tiempo real (verde/amarillo/naranja/rojo) según el análisis de Neo4j.</li>
+            <li><strong>Persistencia del análisis:</strong> Cuando un dron detecta incendio y luego se aleja, la información persiste en pantalla (no desaparece) hasta que se detecte un nuevo evento.</li>
+            <li><strong>Acciones recomendadas:</strong> Panel con 5 medidas de respuesta sugeridas por el sistema:
+                <ul>
+                    <li>Redirigir DRON_GAMMA a zona de propagación</li>
+                    <li>Intensificar monitoreo (reducir intervalo de lectura)</li>
+                    <li>Protocolo de evacuación de fauna (especies prioritarias VU/NT)</li>
+                    <li>Cortafuegos preventivo (brigada terrestre)</li>
+                    <li>Notificación a bomberos/Defensa Civil con coordenadas GPS</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- ══════════ 6. ENTREGABLES ETAPA II: CONFIGURACIÓN Y GOBERNANZA ══════════ -->
+    <div class="section">
+        <h2>6. Entregables de la Etapa II: Configuración y Gobernanza</h2>
+
+        <h3>6.1 Bibliotecas de Software Utilizadas</h3>
+        <table>
+            <thead><tr><th>Biblioteca</th><th>Versión</th><th>Propósito</th><th>Justificación</th></tr></thead>
+            <tbody>
+                <tr><td><code>pymongo</code></td><td>4.x</td><td>Driver oficial de MongoDB para Python</td><td>Mantenido por MongoDB Inc., soporte nativo de BSON y GeoJSON, alto rendimiento en inserciones masivas.</td></tr>
+                <tr><td><code>neo4j</code></td><td>5.x</td><td>Driver oficial de Neo4j para Python</td><td>Soporte de transacciones gestionadas, sesiones con routing, compatible con Causal Clustering.</td></tr>
+                <tr><td><code>flet</code></td><td>0.21+</td><td>Framework de UI multiplataforma en Python</td><td>Permite construir dashboards interactivos sin JavaScript, con hot reload para desarrollo rápido.</td></tr>
+                <tr><td><code>Docker</code></td><td>24.x</td><td>Containerización de MongoDB y Neo4j</td><td>Aislamiento de servicios, reproducibilidad del entorno, despliegue con un comando.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>6.2 Proceso de Control de Cambios</h3>
+        <p>El proceso de control de cambios definido para EcoDrones sigue un flujo estructurado:</p>
+        <ol>
+            <li><strong>Requerimiento:</strong> Se identifica la necesidad de cambio (ej: agregar nueva especie, modificar umbral de temperatura, agregar sensor).</li>
+            <li><strong>Evaluación de impacto:</strong> Se analiza qué componentes se afectan (simulador, monitor, grafo, dashboard) y si el cambio requiere modificar estructuras de datos existentes.</li>
+            <li><strong>Aprobación:</strong> El cambio se documenta con su justificación y se valida que no rompa la integración entre MongoDB y Neo4j.</li>
+            <li><strong>Implementación:</strong> Se aplica en el componente correspondiente.</li>
+            <li><strong>Validación:</strong> Se ejecuta el flujo completo (simulador → monitor → dashboard) para verificar que no hay regresiones.</li>
+        </ol>
+
+        <div class="box-info">
+            <p><strong>Ejemplo de cambio controlado:</strong> Agregar una nueva especie "Águila Mora" al grafo. Impacto: solo <code>cargar_neo4j.py</code> necesita un nuevo nodo y relación HABITA_EN. El monitor y dashboard la muestran automáticamente sin modificación porque consumen datos dinámicamente del grafo.</p>
+        </div>
+
+        <h3>6.3 Herramienta para Auditorías de Configuración</h3>
+        <p><strong>Herramienta propuesta: Docker Inspect + Script de Validación</strong></p>
+        <p>Se propone un script de auditoría que verifica:</p>
+        <ul>
+            <li>Que los contenedores MongoDB y Neo4j estén corriendo con las versiones esperadas.</li>
+            <li>Que los puertos de conexión (27017, 7687) estén accesibles.</li>
+            <li>Que el grafo contenga la cantidad esperada de nodos estáticos (6 Zonas, 7 Especies, 3 Drones).</li>
+            <li>Que la colección de telemetría tenga el índice geoespacial creado.</li>
+            <li>Que las credenciales de Neo4j coincidan con las configuradas en los scripts Python.</li>
+        </ul>
+
+        <h3>6.4 Plan de Recuperación de Desastres y Continuidad</h3>
+        <table>
+            <thead><tr><th>Escenario</th><th>Estrategia de Recuperación</th><th>RTO Estimado</th></tr></thead>
+            <tbody>
+                <tr><td>Caída de contenedor MongoDB</td><td>Docker restart automático (<code>--restart=always</code>). Datos persistidos en volumen Docker.</td><td>&lt; 30 seg</td></tr>
+                <tr><td>Caída de contenedor Neo4j</td><td>Docker restart + re-ejecución de <code>cargar_neo4j.py</code> si el volumen se pierde.</td><td>&lt; 2 min</td></tr>
+                <tr><td>Corrupción de datos de telemetría</td><td>La telemetría es append-only; se recupera desde el último backup. Las alertas con análisis se preservan en colección separada.</td><td>&lt; 5 min</td></tr>
+                <tr><td>Pérdida total del servidor</td><td>Re-despliegue desde código fuente (<code>iniciar_servicios.bat</code>). El grafo se reconstruye desde script. La telemetría histórica se pierde pero el sistema opera inmediatamente.</td><td>&lt; 10 min</td></tr>
+            </tbody>
+        </table>
+
+        <h3>6.5 Herramienta para Auditorías de Seguridad Informática</h3>
+        <p><strong>Herramienta propuesta: Bandit (Python Static Analysis)</strong></p>
+        <p>Bandit es un analizador estático de seguridad para código Python que detecta vulnerabilidades comunes como:</p>
+        <ul>
+            <li>Credenciales hardcodeadas en código fuente.</li>
+            <li>Uso de funciones inseguras (eval, exec).</li>
+            <li>Conexiones sin cifrado (verificación de URIs).</li>
+            <li>Inyecciones potenciales en consultas dinámicas.</li>
+        </ul>
+        <p>Se recomienda ejecutar <code>bandit -r *.py</code> periódicamente como parte del proceso de validación previo a cada despliegue.</p>
+    </div>
+    <!-- ══════════ 7. ENTREGABLES ETAPA FINAL: DESARROLLO SEGURO ══════════ -->
+    <div class="section">
+        <h2>7. Entregables de la Etapa Final: Desarrollo Seguro de Software</h2>
+
+        <h3>7.1 Aspectos de Seguridad en el Ciclo de Desarrollo</h3>
+        <p>La solución EcoDrones incorpora prácticas de desarrollo seguro en cada fase del ciclo:</p>
+        <table>
+            <thead><tr><th>Fase del Ciclo</th><th>Práctica de Seguridad Aplicada</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Diseño</strong></td><td>Principio de mínimo privilegio: cada componente solo accede a las colecciones/nodos que necesita. El dashboard solo lee; el monitor lee y escribe.</td></tr>
+                <tr><td><strong>Codificación</strong></td><td>Consultas parametrizadas en Cypher y filtros seguros en MongoDB. No se construyen queries por concatenación de strings.</td></tr>
+                <tr><td><strong>Testing</strong></td><td>Validación de rangos de coordenadas GPS antes de inserción. Verificación de tipos de datos en lecturas de sensores.</td></tr>
+                <tr><td><strong>Despliegue</strong></td><td>Contenedores con imágenes oficiales de proveedores confiables. Red Docker aislada para comunicación inter-contenedor.</td></tr>
+                <tr><td><strong>Operación</strong></td><td>Manejo de excepciones con <code>try/finally</code> para liberación de conexiones. Logs en consola para auditoría operativa.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>7.2 Gestión de Privilegios y Accesos</h3>
+        <table>
+            <thead><tr><th>Componente</th><th>Nivel de Acceso</th><th>Justificación</th></tr></thead>
+            <tbody>
+                <tr><td>simulador_continuo.py</td><td>MongoDB: WRITE en <code>telemetria</code></td><td>Solo inserta documentos; no necesita leer ni modificar existentes.</td></tr>
+                <tr><td>monitor_alertas.py</td><td>MongoDB: READ en <code>telemetria</code>, WRITE en <code>alertas_disparadas</code><br>Neo4j: READ + WRITE</td><td>Lee telemetría para detectar, escribe alertas; en Neo4j crea nodos y lee para análisis.</td></tr>
+                <tr><td>dashboard.py</td><td>MongoDB: READ ONLY</td><td>Solo visualiza datos; nunca modifica el estado del sistema.</td></tr>
+                <tr><td>cargar_neo4j.py</td><td>Neo4j: ADMIN (ejecución única)</td><td>Inicializa el grafo completo; se ejecuta una sola vez al inicio.</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box-warn">
+            <p><strong>Recomendación para producción:</strong> Crear usuarios específicos en MongoDB y Neo4j con los permisos mínimos indicados arriba, en lugar de usar el usuario administrador genérico (<code>neo4j/password</code>) utilizado en el prototipo.</p>
+        </div>
+
+        <h3>7.3 Prevención de Ataques de Inyección — Ejemplo de Código</h3>
+        <p>El principal vector de inyección en este sistema son las consultas Cypher a Neo4j. A continuación se muestra la práctica segura implementada:</p>
+
+        <h4>❌ Forma INSEGURA (vulnerable a inyección Cypher):</h4>
+        <div class="json-block">
+<span style="color:#ef5350;"># NUNCA HACER ESTO — Concatenación directa de variables</span>
+query = f"MATCH (z:Zona {{cod_zona: '{zona}'}}) RETURN z"
+tx.run(query)
+
+<span style="color:#ef5350;"># Un atacante podría inyectar: ZONA_001'}}) DETACH DELETE z //'</span>
+        </div>
+
+        <h4>✅ Forma SEGURA (parametrización — implementada en EcoDrones):</h4>
+        <div class="json-block">
+<span style="color:#66bb6a;"># CORRECTO — Uso de parámetros $variable</span>
+query = """
+    MATCH (z:Zona {cod_zona: $zona})
+    OPTIONAL MATCH (especie:Especie)-[:HABITA_EN]->(z)
+    RETURN z.nombre AS zona_nombre,
+           collect(especie.nombre_comun) AS fauna
+"""
+result = tx.run(query, zona=cod_zona)
+
+<span style="color:#66bb6a;"># El driver de Neo4j escapa automáticamente el valor de 'zona'</span>
+<span style="color:#66bb6a;"># No importa qué contenga la variable, nunca se ejecuta como código</span>
+        </div>
+
+        <p>En MongoDB, la protección se logra mediante el uso del driver PyMongo que acepta diccionarios nativos de Python en lugar de strings de consulta:</p>
+        <div class="json-block">
+<span style="color:#66bb6a;"># MongoDB — Consulta segura con diccionario</span>
+filtro = {"_id": {"$gt": ultimo_id_procesado}}
+resultados = col_telemetria.find(filtro).sort("_id", 1)
+
+<span style="color:#66bb6a;"># El operador $gt es un objeto Python, no una cadena interpretada</span>
+<span style="color:#66bb6a;"># No hay posibilidad de inyección NoSQL</span>
+        </div>
+
+        <h3>7.4 Técnicas de Protección de Datos</h3>
+        <ul>
+            <li><strong>Datos en tránsito:</strong> Para producción se recomienda habilitar TLS en las conexiones a MongoDB (<code>mongodb+srv://</code>) y Neo4j (<code>bolt+s://</code>). En el prototipo local se usa conexión sin cifrado por simplicidad.</li>
+            <li><strong>Datos en reposo:</strong> MongoDB soporta encriptación a nivel de storage engine (WiredTiger). Neo4j Enterprise ofrece encriptación de store files. Ambos se activan en configuración de producción.</li>
+            <li><strong>Integridad de datos:</strong> La telemetría es append-only (nunca se modifica), lo que garantiza inmutabilidad. Las alertas incluyen referencia al ObjectId de origen para trazabilidad.</li>
+            <li><strong>Minimización de datos sensibles:</strong> El sistema no almacena datos personales. Las coordenadas GPS corresponden a posiciones de drones, no de personas.</li>
+            <li><strong>Backup:</strong> MongoDB soporta <code>mongodump</code> para respaldos completos. Neo4j soporta <code>neo4j-admin dump</code>. Se recomienda backup diario automatizado.</li>
+        </ul>
+    </div>
+    <!-- ══════════ 8. CONCLUSIÓN Y RECOMENDACIONES ══════════ -->
+    <div class="section">
+        <h2>8. Conclusión y Recomendaciones</h2>
+
+        <h3>8.1 Reflexión General</h3>
+        <p>El desarrollo de EcoDrones a lo largo de las tres etapas demuestra que una solución de ingeniería de datos bien fundamentada requiere un proceso progresivo: desde la comprensión profunda del problema (Etapa 0), pasando por el diseño conceptual orientado a consultas (Etapa I), hasta la implementación funcional con prácticas de gobernanza y seguridad (Etapa Final).</p>
+        <p>La arquitectura políglota no es un capricho técnico sino una respuesta honesta a la complejidad del problema: la telemetría IoT de alta frecuencia exige un modelo documental, y la predicción de propagación exige un modelo de grafos. Ambos se potencian mutuamente a través de la integración bidireccional implementada.</p>
+
+        <h3>8.2 Aprendizajes Obtenidos</h3>
+        <ul>
+            <li><strong>Diseñar para consultas:</strong> Abandonar la normalización relacional y pensar primero en "¿qué necesito responder?" resultó en estructuras más simples y performantes.</li>
+            <li><strong>La integración es el desafío real:</strong> Seleccionar tecnologías es fácil; hacer que trabajen juntas sin duplicar datos ni generar inconsistencias fue el problema más complejo.</li>
+            <li><strong>NoSQL no es una sola cosa:</strong> Cada modelo tiene su dominio natural. La clave es identificar qué preguntas debe responder el sistema.</li>
+            <li><strong>La seguridad es un hábito, no una capa:</strong> Usar parametrización desde el día uno es más fácil que intentar arreglar concatenaciones después.</li>
+            <li><strong>Docker transforma la experiencia de desarrollo:</strong> Levantar toda la infraestructura con un comando eliminó fricciones de configuración.</li>
+        </ul>
+
+        <h3>8.3 Recomendaciones para la Organización</h3>
+        <ol>
+            <li><strong>Corto plazo:</strong> Implementar autenticación por roles en MongoDB y Neo4j con los permisos mínimos definidos en la sección 7.2.</li>
+            <li><strong>Mediano plazo:</strong> Integrar APIs meteorológicas reales (SMN Argentina) para reemplazar la simulación de viento con datos en vivo.</li>
+            <li><strong>Mediano plazo:</strong> Implementar Change Streams de MongoDB para reemplazar el polling con notificaciones push, reduciendo latencia.</li>
+            <li><strong>Largo plazo:</strong> Evolucionar hacia un modelo de propagación 2D con factor de pendiente del terreno y velocidad de viento variable.</li>
+            <li><strong>Largo plazo:</strong> Desplegar MongoDB en Replica Set y Neo4j en Causal Cluster para alta disponibilidad en producción.</li>
+        </ol>
+
+        <h3>8.4 Oportunidades de Mejora Futuras</h3>
+        <ul>
+            <li>Incorporar procesamiento de imágenes térmicas desde cámaras en los drones.</li>
+            <li>Agregar alertas por nivel de CO₂ independientes de la temperatura.</li>
+            <li>Implementar machine learning para predecir riesgo basado en patrones históricos.</li>
+            <li>Crear un portal web público con el estado de riesgo de cada zona para la comunidad.</li>
+            <li>Integrar con el Sistema Nacional de Manejo del Fuego para alertas oficiales coordinadas.</li>
+        </ul>
+
+        <h3>8.5 Visión Integradora</h3>
+        <p>Este trabajo refuerza la idea de que la ingeniería de datos no consiste en elegir la "mejor" base de datos en abstracto, sino en entender profundamente el problema, identificar la naturaleza de los datos y las consultas, y seleccionar las herramientas que mejor se adaptan a ese contexto específico. La gobernanza, la configuración controlada y el desarrollo seguro no son agregados opcionales sino pilares que garantizan que la solución pueda mantenerse, evolucionar y operar de forma confiable en un entorno de producción real.</p>
+    </div>
+
+    <!-- ══════════ FOOTER ══════════ -->
+    <footer>
+        <p><strong>EcoDrones</strong> — Sistema de Monitoreo Ambiental con Drones</p>
+        <p>Documento Final — Bases de Datos II — Ingeniería de Datos</p>
+        <p>
+            <span class="tag tag-b">MongoDB</span>
+            <span class="tag tag-g">Neo4j</span>
+            <span class="tag tag-o">Python</span>
+            <span class="tag tag-b">Docker</span>
+            <span class="tag tag-g">Flet</span>
+        </p>
+        <p style="margin-top:16px; font-size:0.85em;">Documento generado como entregable académico. Todos los datos son producto de simulación.</p>
+    </footer>
+
+</div>
+</body>
+</html>
