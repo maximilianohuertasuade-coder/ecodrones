@@ -465,7 +465,7 @@ def main(page: ft.Page):
             ft.Text("Monitoreo Táctico: Área Capilla del Monte / Cerro Uritorco", size=12, color="#aaaaaa"),
         ]),
         ft.Container(expand=True),
-        ft.ElevatedButton(
+        ft.Button(
             "Neo4j Browser",
             icon=ft.Icons.HUB,
             on_click=open_neo4j,
