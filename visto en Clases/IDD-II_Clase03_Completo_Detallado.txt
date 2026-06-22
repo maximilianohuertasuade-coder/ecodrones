@@ -1,0 +1,286 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE03
+========================================================================
+
+--- DIAPOSITIVA / PÁGINA 1 ---
+Distintos modelos NoSQL
+Diseñar y consultar estructuras documentales utilizando 
+MongoDB, comprendiendo el modelo documental, la 
+desnormalización y las operaciones básicas de acceso y 
+recuperación de información.
+Modelo documental y 
+consultas NoSQL
+2026
+Unidad 2
+Clase 3
+
+--- DIAPOSITIVA / PÁGINA 2 ---
+En un archivo JSON, los valores pueden ser 
+Cadenas (String), Números, Booleanos, Objetos 
+(Conjuntos de pares clave-valor), Arrays (Listas de 
+valores encerradas entre corchetes), Null.
+2026
+JSON (JavaScript 
+Object
+ 
+Notation
+)
+JSON es un formato de texto ligero e 
+independiente del lenguaje para el 
+intercambio de datos estructurados. Basado 
+en pares clave-valor y arreglos, es fácil de 
+leer para humanos y rápido de interpretar por 
+máquinas, siendo estándar en APIs web y 
+configuraciones, especialmente para 
+comunicación entre aplicaciones.
+
+
+--- DIAPOSITIVA / PÁGINA 3 ---
+2026
+USO
+Guardar configuraciones de 
+programas
+Intercambiar datos entre 
+sistemas (APIs)
+Almacenar información de 
+forma organizada (catálogo 
+de productos, precios..)
+Portabilidad de datos
+Objeto en memoria para 
+interactuar con programas.
+
+--- DIAPOSITIVA / PÁGINA 4 ---
+2026
+BASE DE DATOS DOCUMENTALES
+Una base de datos documental 
+es un sistema NoSQL diseñado 
+para almacenar, recuperar y 
+gestionar información 
+semiestructurada, típicamente 
+en formatos JSON o BSON. A 
+diferencia de las relacionales, no 
+requieren esquemas rígidos, 
+permitiendo flexibilidad en los 
+datos y un alto rendimiento para 
+aplicaciones modernas. Son 
+ideales para Big Data, catálogos, 
+sistemas de gestión de 
+contenidos y perfiles de usuario.
+
+--- DIAPOSITIVA / PÁGINA 5 ---
+2026
+Cuando usar base documental?
+cuando la flexibilidad y la 
+velocidad de desarrollo son más 
+importantes que la rigidez de una 
+tabla
+1. Cuando tus datos cambian seguido (Esquema flexible) Si 
+estás lanzando un prototipo o una Startup y no sabés qué 
+datos vas a necesitar mañana. Ejemplo: Un catálogo de 
+productos de e-commerce. Un celular tiene "memoria RAM" , 
+pero una remera tiene "talle" y "color" . En JSON, guardás cada 
+uno con sus propias claves sin romper nada.
+
+--- DIAPOSITIVA / PÁGINA 6 ---
+2026
+Cuando usar base documental?
+cuando la flexibilidad y la 
+velocidad de desarrollo son más 
+importantes que la rigidez de una 
+tabla
+2. Contenido Jerárquico o "Anidado”: 
+Cuando la información está muy 
+relacionada entre sí y querés evitar los 
+famosos "Joins" (cruces de tablas) de las 
+bases tradicionales. Ejemplo: Un post de un 
+blog. En un solo JSON guardás el título, el 
+autor, los comentarios y los tags. Al pedir el 
+post, traés todo de un solo golpe.
+3. Aplicaciones de Tiempo Real y Grandes Volúmenes: Son 
+excelentes para manejar muchísimos datos que entran rápido y 
+no son del todo uniformes. Ejemplo: Apps de Internet de las 
+Cosas (IoT) que reciben datos de sensores, o el muro de noticias 
+de una Red Social.
+
+--- DIAPOSITIVA / PÁGINA 7 ---
+2026
+Cuando usar base documental?
+cuando la flexibilidad y la 
+velocidad de desarrollo son más 
+importantes que la rigidez de una 
+tabla
+4. Cuando programás en JavaScript (o 
+Node.js). Si tu lenguaje de programación 
+ya usa JSON de forma nativa, usar una 
+base de datos documental (como 
+MongoDB) es como hablar el mismo 
+idioma en ambos lados. No necesitás 
+"traductores" pesados entre tu código y tu 
+base de datos.
+5. Gestión de Configuraciones y Perfiles: Para guardar 
+preferencias de usuarios o ajustes de aplicaciones donde cada 
+usuario puede tener configuraciones distintas y únicas.
+
+--- DIAPOSITIVA / PÁGINA 8 ---
+2026
+Desnormalización
+La desnormalización en bases de datos 
+documentales (como MongoDB) es una 
+técnica de modelado que integra datos 
+relacionados dentro de un mismo 
+documento (embedding) para evitar 
+uniones (joins) complejas. A diferencia de 
+los sistemas relacionales, aquí se prioriza 
+la velocidad de lectura y la eficiencia de 
+las consultas sobre la integridad 
+referencial, duplicando información 
+estratégicamente.
+
+
+--- DIAPOSITIVA / PÁGINA 9 ---
+Actividad
+Instalación MongoDB
+2026
+https://www.mongodb.com/try/download/community 
+Instalar MongoDB
+Instalar consola mongosh
+MongoDB Altas (cloud – on macOS)
+
+--- DIAPOSITIVA / PÁGINA 10 ---
+2026
+C:
+\
+mongosh
+
+
+--- DIAPOSITIVA / PÁGINA 11 ---
+2026
+show dbs: Muestra todas las bases de datos 
+disponibles.
+use <nombre_db>: Cambia a una base de datos 
+específica; si no existe, la crea al insertar datos.
+db: Muestra la base de datos actual en uso.
+show collections: Muestra las colecciones de 
+la base de datos actual.
+db.createCollection("<nombre>"): Crea 
+una nueva colección explícitamente.
+db.dropDatabase(): Elimina la base de datos 
+actual.
+db.<coleccion>.drop(): Elimina una 
+colección específica
+help: Muestra la ayuda general del shell.
+db.help(): Muestra ayuda para los métodos de 
+la base de datos.
+db.collection.help(): Muestra ayuda 
+para los métodos de colecciones.
+cls: Limpia la pantalla.
+https://www.mongodb.com/es/docs/v8.0/reference/command/
+
+--- DIAPOSITIVA / PÁGINA 12 ---
+MongoDB guarda información como documentos JSON organizados en 
+colecciones dentro de una base de datos, permitiendo estructuras 
+anidadas y listas sin necesidad de definir un esquema previo.
+
+
+--- DIAPOSITIVA / PÁGINA 13 ---
+Creación de base y colección
+Campos 
+simples
+Objeto 
+embebido
+Array
+
+--- DIAPOSITIVA / PÁGINA 14 ---
+Inserción de documentos con estructura anidada
+
+
+--- DIAPOSITIVA / PÁGINA 15 ---
+Inserción de documentos con estructura anidada
+
+
+--- DIAPOSITIVA / PÁGINA 16 ---
+Consultas simples para recuperar datos
+• db.contactos.find() 
+Esto devuelve todo el contenido. Es la consulta más básica y compacta.
+• Si querés verlo más legible con identación y saltos
+db.contactos.find().pretty()
+• Consultar por un campo simple: 
+db.contactos.find({ nombre: "Carlos Gómez" }) 
+MongoDB busca documentos donde ese campo coincida.
+• Recuperar por un campo dentro de un objeto anidado:
+db.contactos.find({ "direccion.ciudad": "Morón" })
+• Recuperar dentro de un array simple:
+db.contactos.find({ etiquetas: "cliente" })
+MongoDB busca automáticamente dentro del array.
+• Recuperar dentro de un array de objetos:
+db.contactos.find({ "telefonos.tipo": "trabajo" })
+
+--- DIAPOSITIVA / PÁGINA 17 ---
+Actualización de documentos – Método updateone y Operador $set
+
+
+--- DIAPOSITIVA / PÁGINA 18 ---
+Eliminación de registros
+deleteOne → elimina un documento 
+deleteMany → elimina varios documentos 
+filtro {} → elimina todos los registros 
+drop() → elimina la colección completa
+db.contactos.deleteOne({ nombre: "Carlos Gómez" })
+MongoDB busca el primer documento que cumpla la condición y lo elimina. 
+db.contactos.deleteMany({ etiquetas: "cliente" })
+Esto borra todos los documentos que coincidan.
+db.contactos.deleteMany({}) MongoDB elimina todos los 
+documentos de la colección, porque el filtro vacío coincide con todos. Esto 
+no borra la colección, solo su contenido.
+db.contactos.drop() Eso sí elimina la colección entera.
+
+--- DIAPOSITIVA / PÁGINA 19 ---
+Eliminación de registros seleccionados
+deleteOne() siempre elimina el primer documento que coincide con el filtro.
+Para seleccionar otro documento coincidente en el filtro, se debe identificar el 
+documento de forma única y borrar por ese identificador. Cada documento tiene 
+un _id.
+Primero se busca: 
+db.contactos.find({ ciudad: "Morón" })
+Tomás el _id del segundo documento y luego borrás:
+db.contactos.deleteOne({ _id: ObjectId("...") })
+Eso es lo más preciso porque cada documento tiene un identificador único.
+
+--- DIAPOSITIVA / PÁGINA 20 ---
+Base documental de reuniones de trabajo
+2026
+La empresa necesita registrar reuniones internas de 
+distintas áreas para conservar información sobre temas 
+tratados, participantes, decisiones tomadas y próximos 
+encuentros. 
+El objetivo es construir una base documental en MongoDB 
+que permita almacenar cada reunión como un documento 
+y luego consultar reuniones por tema o motivo.
+Actividad
+
+
+--- DIAPOSITIVA / PÁGINA 21 ---
+BIBLIOGRAFIA
+MongoDB — Documentación oficial: “Documents and Data Model” . 
+Explica la estructura de documentos, objetos embebidos y arrays.
+https://www.mongodb.com/docs/manual/core/document/
+MongoDB — “CRUD Operations”. Incluye insertOne, find, updateOne y 
+deleteOne.
+https://www.mongodb.com/docs/manual/crud/
+MongoDB — “Query Documents”. Consultas simples sobre campos y 
+estructuras anidadas.
+https://www.mongodb.com/docs/manual/tutorial/query-documents/
+
+
+--- DIAPOSITIVA / PÁGINA 22 ---
+PROXIMA CLASE
+Clase 4 – Diseño documental y analítica de datos 
+aplicada
+Tema:
+MongoDB / MQL avanzado
+– Agregaciones
+– Índices
+– Diseño orientado a consultas
+– Casos de auditoría (hallazgos, evidencia, eventos)
+Ejercitación aplicada al TP .
+

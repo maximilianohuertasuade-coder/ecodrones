@@ -1,0 +1,138 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE04
+========================================================================
+
+--- DIAPOSITIVA / PÁGINA 1 ---
+Distintos modelos NoSQL
+Aplicar técnicas avanzadas de modelado y consulta en bases 
+de datos documentales, utilizando agregaciones e índices 
+para resolver problemáticas reales de análisis de datos y 
+generación de hallazgos.
+Diseño documental y 
+analítica de datos 
+2026
+Unidad 2
+Clase 4
+
+--- DIAPOSITIVA / PÁGINA 2 ---
+Base documental de reuniones de trabajo
+2026
+La empresa necesita registrar reuniones internas de 
+distintas áreas para conservar información sobre temas 
+tratados, participantes, decisiones tomadas y próximos 
+encuentros. 
+El objetivo es construir una base documental en MongoDB 
+que permita almacenar cada reunión como un documento 
+y luego consultar reuniones por tema o motivo.
+Actividad
+
+
+--- DIAPOSITIVA / PÁGINA 3 ---
+2026
+¿Qué 
+consultas necesito resolver?
+La estructura documental no se define 
+únicamente por cómo “se ve” el negocio, sino 
+también por cómo se va a explotar la información. 
+A esto lo llamamos diseño orientado a consultas.
+El diseño documental orientado a consultas es un 
+enfoque estructurado para organizar, almacenar y 
+gestionar información con el objetivo principal de 
+facilitar su rápida localización, análisis y uso 
+eficiente en procesos de investigación, gestión de 
+conocimiento o toma de decisiones.
+
+
+--- DIAPOSITIVA / PÁGINA 4 ---
+2026
+
+
+--- DIAPOSITIVA / PÁGINA 5 ---
+2026
+MongoDB como herramienta analítica
+MongoDB es una potente 
+plataforma de datos no 
+relacionales (NoSQL) diseñada 
+para el análisis de datos en tiempo 
+real y la gestión de grandes 
+volúmenes de información flexible. 
+Utiliza un marco de agregación 
+robusto para procesar datos 
+complejos sin ETL, facilitando 
+visualizaciones, análisis de 
+esquemas y consultas eficientes. 
+
+
+--- DIAPOSITIVA / PÁGINA 6 ---
+
+--- DIAPOSITIVA / PÁGINA 7 ---
+
+--- DIAPOSITIVA / PÁGINA 8 ---
+2026
+Ventaja ¿Qué significa? Impacto en la analítica
+Diseño orientado a consultas Los documentos se modelan según 
+cómo se van a consultar
+Permite responder preguntas analíticas 
+más rápido
+Datos embebidos Información relacionada en un mismo 
+documento
+Reduce joins y mejora el rendimiento del 
+análisis
+Pipeline de agregación Análisis paso a paso con $match, 
+$group, etc. Facilita construir métricas e indicadores
+Flexibilidad del esquema No requiere estructura fija Permite incorporar nuevos datos sin 
+rediseñar todo
+Escalabilidad horizontal Distribución en múltiples nodos Permite analizar grandes volúmenes de 
+datos
+Alto rendimiento de lectura Optimizado para consultas frecuentes Ideal para dashboards y análisis 
+exploratorio
+Índices avanzados Índices simples, compuestos y 
+multiclave Aceleran filtros y agrupaciones analíticas
+Manejo natural de JSON Datos semi-estructurados nativos Facilita análisis de eventos y logs
+Soporte para arrays Documentos con listas internas Permite análisis de eventos con $unwind
+Menor complejidad de consultas Evita múltiples joins complejos Consultas analíticas más simples y 
+legibles
+Agregaciones en tiempo real Cálculos sin ETL previo Análisis inmediato sobre datos 
+operativos
+Integración con Big Data Compatible con Spark, BI y Data Lake Facilita arquitectura analítica moderna
+
+--- DIAPOSITIVA / PÁGINA 9 ---
+
+--- DIAPOSITIVA / PÁGINA 10 ---
+Caso integrado: Auditoría de Operaciones 
+en una Empresa Digital
+2026
+Actividad
+Una empresa digital registra todas las acciones 
+importantes realizadas por los usuarios dentro de sus 
+sistemas: aprobaciones, modificaciones, eliminaciones, 
+altas de proveedores, cambios de permisos, entre otras. 
+El área de auditoría necesita analizar estos eventos para 
+detectar comportamientos inusuales, concentraciones 
+de actividad y posibles riesgos operativos.
+
+--- DIAPOSITIVA / PÁGINA 11 ---
+BIBLIOGRAFIA
+MongoDB — Documentación oficial: “Documents and Data Model” . 
+Explica la estructura de documentos, objetos embebidos y arrays.
+https://www.mongodb.com/docs/manual/core/document/
+MongoDB — “CRUD Operations”. Incluye insertOne, find, updateOne y 
+deleteOne.
+https://www.mongodb.com/docs/manual/crud/
+MongoDB — “Query Documents”. Consultas simples sobre campos y 
+estructuras anidadas.
+https://www.mongodb.com/docs/manual/tutorial/query-documents/
+
+
+--- DIAPOSITIVA / PÁGINA 12 ---
+PROXIMA CLASE
+Clase 5 – Modelos de grafos y análisis de 
+relaciones complejas
+Tema:
+Modelo de grafos.
+Cypher – Bases de datos de grafos
+– Nodos, relaciones y propiedades
+– Consultas de patrones
+– Casos de uso: colusión, fraude, relaciones ocultas
+Ejercitación conceptual y práctica básica.
+

@@ -1,0 +1,570 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE01
+========================================================================
+
+--- DIAPOSITIVA / PÁGINA 1 ---
+Ingeniería de Datos II
+
+--- DIAPOSITIVA / PÁGINA 2 ---
+Ingeniería de Datos II
+
+
+--- DIAPOSITIVA / PÁGINA 3 ---
+Ingeniería de Datos II
+La materia tiene como objetivo que el estudiante 
+comprenda y aplique los principios de la Ingeniería de 
+Datos en contextos NoSQL, adquiriendo la capacidad 
+de analizar problemas reales de datos, evaluar 
+alternativas tecnológicas y diseñar soluciones 
+acordes a escenarios de alta escala, distribución y 
+diversidad de información.
+Implica formar estudiantes que sepan pensar datos como 
+ingenieros, no como operadores de herramientas.
+
+--- DIAPOSITIVA / PÁGINA 4 ---
+Ingeniería de Datos II
+Brindar 
+conocimientos 
+fundamentales
+Desarrollar 
+habilidades 
+prácticas
+Fomentar la 
+innovación
+Enseñar ética y 
+responsabilidad 
+profesional
+Preparar para el 
+mercado laboral
+2026
+
+--- DIAPOSITIVA / PÁGINA 5 ---
+Profesor Alfonso Fernández Buttera
+www.linkedin.com/in/alfonso-fernandez-buttera-87554b4
+Conociendonos…
+
+--- DIAPOSITIVA / PÁGINA 6 ---
+Uso de tecnología
+• MongoDB / MQL, como eje práctico para el modelado, 
+almacenamiento y consulta de datos documentales, y para la 
+generación de evidencia y hallazgos de análisis.
+• Cypher/Neo4j, para la comprensión de modelos de grafos y el 
+análisis de relaciones complejas, aplicadas a escenarios de 
+colusión, fraude y vínculos ocultos.
+• CQL (Cassandra Query Language), para el estudio de 
+arquitecturas distribuidas, escalabilidad horizontal, manejo de 
+eventos masivos y aplicación del teorema CAP .
+• Redis (commands), para el análisis de escenarios de alto 
+rendimiento, caché, contadores y control de estados 
+temporales en procesos automatizados.
+2026
+
+--- DIAPOSITIVA / PÁGINA 7 ---
+Unidad 1: Concepto de NoSQL
+Unidad 2: Distintos modelos NoSQL
+Clase 
+1
+-
+2
+Clase 
+3 al 6
+Unidad 3: Administración y recuperación 
+desde fuentes de datos no estructurados
+Clase 
+7
+Unidad 4: Replicación y particionamiento
+Clase 
+8
+-
+9
+Unidad 5: Acceso a estructura NoSQL
+Clase 
+10
+-
+11
+Unidad 6: Manejo de grandes volúmenes de datos
+Clase 
+12
+-
+13
+
+
+--- DIAPOSITIVA / PÁGINA 8 ---
+Evaluaciones
+RAZONAMIENTO TÉCNICO
+TOMA DE DECISIONES FUNDAMENTADAS 
+CAPACIDAD DE INTEGRACIÓN CONCEPTUAL
+CREATIVIDAD
+PRIMER EXAMEN 
+PARCIAL
+∑ PUNTAJES
+Casos
+Ejercicios
+Tareas
+1° Parcial
+TPO
+Sábado
+Octubre
+11
+CLASE 
+REMOTA
+20
+-
+Abr
+-
+2026TRABAJO 
+PRACTICO
+8
+-
+Jun
+-
+2026
+FINAL ADELANTADO
+RECUPERATORIOS
+13
+-
+Jul
+-
+2026FINAL
+20
+-
+Jul
+-
+2026
+2026
+
+
+--- DIAPOSITIVA / PÁGINA 9 ---
+Ingeniería de Datos II
+Comprender las diferencias fundamentales con el 
+modelo relacional, identificando criterios de selección 
+en función del volumen de datos, el tipo de información y 
+los patrones de consulta.
+De lo relacional a NoSQL: 
+nuevos paradigmas de 
+datos
+2026
+“La Suerte es lo que 
+sucede cuando la 
+preparación se 
+encuentra con la 
+oportunidad” Seneca 
+(60DC)
+
+--- DIAPOSITIVA / PÁGINA 10 ---
+2026
+N
+ot
+ 
+O
+nly
+ 
+SQL
+
+--- DIAPOSITIVA / PÁGINA 11 ---
+Esta revolución dio lugar a una nueva forma de 
+pensar las bases de datos: ya no hay una única 
+solución, sino una caja de herramientas que se 
+adapta al problema.
+2026
+Del modelo único al ecosistema NoSQL
+Una respuesta inevitable a la escala, diversidad y velocidad de 
+los datos modernos
+Contexto
+• Explosión de usuarios en 
+aplicaciones web globales 
+(Google, Amazon, Facebook)
+• Datos masivos y diversos: 
+actividad en redes, sensores, logs, 
+JSON
+• Necesidad de operar en múltiples 
+centros de datos con alta 
+disponibilidad
+Problema: 
+el modelo relacional tradicional (SQL 
++ ACID) empieza a mostrar límites en 
+rendimiento y escalabilidad
+Tecnologías pioneras
+• Google Bigtable → modelo de columnas anchas
+• Amazon Dynamo → base clave–valor distribuida
+• Inspiraron proyectos open source:
+• Cassandra (2008)
+• HBase (2008)
+• MongoDB (2009)
+• Neo4j (2009)
+Nace el término NoSQL para agrupar estas nuevas soluciones
+NoSQL prioriza la 
+velocidad sobre la 
+integridad de los 
+datos, permitiendo 
+redundancia para 
+agilizar consultas 
+
+--- DIAPOSITIVA / PÁGINA 12 ---
+NoSQL no es una sola tecnología, sino un 
+conjunto de modelos especializados para 
+distintos tipos de datos y acceso.
+2026
+Tipos de bases NoSQL
+Almacenan pares simples de 
+clave y valor.
+En un carrito de compras, el 
+identificador es el usuario y el 
+valor, los productos
+CLAVE → VALOR
+COLUMNAS ANCHAS Organizan datos en 
+tablas escalar pero 
+con filas de 
+esquemas 
+dinámicos y 
+particionamiento 
+eficiente por clave 
+principal
+DOCUMENTOS
+Almacenan datos semiestructurados (JSON).
+Esquemas flexibles. Datos de un post.
+GRAFOS
+Representar 
+entidades y sus 
+relaciones con nodos 
+(datos) y aristas 
+(conexiones).
+Recomendaciones 
+de productos en e-
+commerce.
+
+
+--- DIAPOSITIVA / PÁGINA 13 ---
+2026
+Modelo relacional vs estructuras No Relacionales
+En el modelo relacional, los datos se guardan en tablas 
+estructuradas (filas y columnas). Cada tabla tiene un esquema 
+fijo (nombre, edad, dirección, etc.). Las relaciones entre tablas se 
+hacen con claves (como ID de cliente).
+Este modelo funciona muy bien cuando los 
+datos son estructurados, predecibles y las 
+relaciones están bien definidas.
+Este modelo funciona muy bien cuando los 
+datos son variables, crecen rápido y las 
+relaciones no siempre están definidas.
+Las bases de datos NoSQL introducen estructuras de datos más 
+flexibles y diversas. No imponen un esquema fijo, cada registro 
+(documento, fila o nodo) puede tener un formato distinto o atributos 
+variables. Esto las hace ideales para:
+• datos semiestructurados (JSON, logs, sensores)
+• esquemas que cambian con el tiempo
+• sistemas distribuidos que necesitan escalar horizontalmente
+NoSQL no reemplaza al modelo 
+relacional. Lo complementa, según el tipo 
+de datos y de problema.
+
+--- DIAPOSITIVA / PÁGINA 14 ---
+Modelo relacional vs estructuras No Relacionales
+Característica Modelo Relacional (SQL) Modelo NoSQL
+Modelo de datos Tablas con filas y columnas Documentos, clave–valor, grafos, 
+columnas anchas
+Esquema Fijo, definido antes de cargar los datos Flexible o dinámico, se adapta a cada 
+registro
+Consultas SQL estándar, permite joins y agregaciones 
+complejas
+Consultas específicas por modelo (MQL, 
+CQL, Cypher...)
+Relaciones entre datos Normalizadas, integridad referencial con 
+claves
+Relación embebida o inexistente; sin 
+joins en muchos casos
+Integridad y consistencia ACID completo (transacciones fuertes) Eventual consistency, BASE (más 
+tolerancia a fallos)
+Escalabilidad Vertical (escala agregando potencia a un 
+servidor) Horizontal (escala agregando más nodos)
+Desempeño y disponibilidad Óptimo en ambientes controlados, menos 
+tolerante a fallos
+Alta disponibilidad, resiliencia ante 
+caídas parciales
+Normalización vs 
+desnormalización Datos normalizados, menor redundancia Datos desnormalizados, mayor velocidad 
+de lectura
+Herramientas comunes MySQL, PostgreSQL, Oracle, SQL Server MongoDB, Cassandra, Redis, Neo4j, 
+DynamoDB
+Casos de uso típicos Sistemas bancarios, ERP , reportes BI, 
+registros estructurados
+Aplicaciones web, IoT, redes sociales, 
+analítica en tiempo real
+
+--- DIAPOSITIVA / PÁGINA 15 ---
+No hay una única base de datos ideal. Hay que 
+mirar qué tipo de datos manejamos, cómo se 
+relacionan, y a qué escala vamos a operar.
+2026
+¿Qué debemos analizar antes de elegir una base de datos?
+Estructura de los datos
+• ¿Esquema fijo y homogéneo? → Relacional
+• ¿Flexible, variable, en evolución? → NoSQL
+Relaciones entre datos
+• ¿JOINs frecuentes y complejos? → Relacional
+• ¿Relaciones densas o jerárquicas simples? → NoSQL 
+(grafos o documentos)
+Volumen y crecimiento esperado
+• ¿Escenario moderado? → Relacional
+• ¿Alta escala o distribución global? → NoSQL
+
+
+--- DIAPOSITIVA / PÁGINA 16 ---
+No se trata simplemente de elegir una herramienta, 
+sino de comprender profundamente las necesidades 
+del negocio y del sistema que se va a construir.
+2026
+Más allá de los datos: operaciones, consistencia y rendimiento
+Tipo de consultas
+• SQL: consultas complejas, reportes ad-hoc → Relacional
+• Accesos simples, patrones definidos → NoSQL
+Transacciones y consistencia
+• ACID estricto (bancos, contabilidad) → Relacional
+• BASE o eventual consistency (apps web, redes) → NoSQL
+Escalabilidad horizontal
+• Miles de usuarios, millones de operaciones → NoSQL 
+distribuido
+• Cargas moderadas con seguridad transaccional → Relacional
+
+
+--- DIAPOSITIVA / PÁGINA 17 ---
+La clave no es elegir "el mejor" , sino "el adecuado para cada problema" .
+Por eso hoy muchas empresas usan persistencia poliglota, 
+combinando ambas tecnologías.
+2026
+SQL y NoSQL en acción: tecnologías que se adaptan a cada necesidad
+
+
+--- DIAPOSITIVA / PÁGINA 18 ---
+NoSQL brilla cuando la escala lo exige. 
+SQL reina cuando la sencillez y consistencia 
+son prioridad.
+2026
+Volúmenes masivos 
+-
+ 
+BigData
+• Diseñado para trabajar en clústeres de 
+servidores comunes (commodity hardware).
+• Cada nodo almacena una parte de los 
+datos, logrando escalabilidad horizontal.
+• Alta capacidad de escritura concurrente → 
+perfecto para streaming, logs, sensores.
+• Casos reales:
+Datos que crecen de terabytes a petabytes
+Ingreso constante y veloz de eventos (IoT, 
+logs, apps globales)
+Las soluciones tradicionales ya no alcanzan.
+¿Qué cambia con el Big Data?
+Bases diseñadas para distribuir datos en clústeres
+Escalabilidad horizontal real: se agregan nodos, no 
+se reemplaza el servidor
+Modelo ideal para datos desordenados, masivos y 
+en tiempo real
+¿Qué propone NoSQL?
+• Apple: miles de nodos Cassandra sostienen iCloud (>10PB)
+• CERN: series de tiempo masivas desde sensores físicos
+• Best Buy: +50.000 transacciones/segundo
+
+--- DIAPOSITIVA / PÁGINA 19 ---
+No es la cantidad de datos lo que define el 
+modelo, sino las preguntas que vas a 
+hacerles.
+2026
+Patrones de consulta 
+-
+ 
+workloads
+Lecturas aleatorias por múltiples campos
+Reportes agregados (ej. ventas totales por 
+región)
+Consultas ad-hoc o no predefinidas
+Casos típicos: Data warehouses, BI, reportes 
+dinámicos
+Lecturas rápidas por clave (O(1))
+Consultas por rango temporal o por partición
+Altas tasas de escritura (logs, métricas, IoT)
+Casos típicos: Dashboards en tiempo real, tracking, 
+dispositivos conectados
+NoSQL: diseñado para acceso 
+simple y repetitivo
+SQL: ideal para consultas 
+complejas y flexibles
+BlackBerry migró de Postgres a Cassandra
+¿Por qué? Necesitaban registrar millones de 
+eventos IoT por segundo. Cassandra permitió 
+escalar sin bloquear el sistema.
+
+
+--- DIAPOSITIVA / PÁGINA 20 ---
+Para usuarios distribuidos 
+globalmente, NoSQL facilita estar 
+“cerca” de todos al mismo tiempo
+2026
+Disponibilidad Geográfica
+Única base central: usuarios lejanos sufren lentitud por red.
+Si el centro de datos falla, la app puede quedar inaccesible.
+Difícil replicar de forma activa en múltiples regiones.
+Datos replicados en varias zonas geográficas
+El usuario accede al nodo más cercano, reduciendo latencia
+Si una región se cae, otras siguen operando sin bloquearse
+Permiten eventual consistency: sincronizan luego, sin 
+necesidad de un “bloqueo global”
+Solución NoSQL
+Inconvenientes para SQL
+
+
+--- DIAPOSITIVA / PÁGINA 21 ---
+2026
+Cuando usar cada modelo de datos
+Ejemplo: Diseñar una mezcla de arquitecturas puede optimizar el almacenamiento y acceso.
+Redis almacena carritos y sesiones temporalmente, y luego se consolida el resto de la 
+información en una base SQL central para BI y Contabilidad
+
+--- DIAPOSITIVA / PÁGINA 22 ---
+2026
+ACID en entornos NoSQL
+Todo o nada → NoSQL se limita a 
+registro individual no 
+multientidad. Sin Rollback global.
+Consistencia referencial ACID ≠ 
+Consistencia de replicación de 
+sistemas distribuidos
+Transacciones concurrentes no 
+interfieren → NoSQL limitado a 
+nivel de registro
+NoSQL muy variable. Algunos 
+priorizan velocidad sobre 
+durabilidad.
+Eventual consistent, highly available
+AP sobre CA
+
+
+--- DIAPOSITIVA / PÁGINA 23 ---
+2026
+ACID en entornos NoSQL
+Eventual consistent, highly available
+AP sobre CA
+Base de 
+Datos Modelo CAP Transacciones ACID
+Tolerancia a 
+particiones Disponibilidad Durabilidad
+MongoDB
+CP (Consistencia + 
+Tolerancia a Particiones)
+Sí (multi-documento 
+desde v4.0, distribuido 
+desde v4.2)
+Sí, mediante replicación y 
+particiones (sharding)
+Alta, pero puede disminuir 
+bajo partición si se prioriza 
+consistencia
+Sí (con journaling y 
+replicación)
+Neo4j
+CP (Consistencia + 
+Tolerancia a Particiones)
+Sí, completamente ACID 
+desde el inicio
+Sí, pero puede sacrificar 
+disponibilidad ante falla
+Limitada bajo fallos, prioriza 
+consistencia de relaciones Sí
+Cassandra
+AP (Alta Disponibilidad + 
+Tolerancia a Particiones)
+Parcial: LWT para casos 
+específicos, sin rollback 
+general
+Sí, escalabilidad 
+horizontal como prioridad
+Muy alta (diseñada para no 
+perder disponibilidad)
+Sí (commit log y 
+replicación)
+Redis
+AP con Durabilidad 
+opcional
+Parcial: A-C-I fuertes, D 
+opcional según 
+configuración
+Sí, con replicación 
+configurada
+Alta por naturaleza in-
+memory y ejecución rápida
+Opcional: requiere 
+configurar AOF o 
+snapshots
+
+--- DIAPOSITIVA / PÁGINA 24 ---
+2026
+ACID en entornos NoSQL
+
+
+--- DIAPOSITIVA / PÁGINA 25 ---
+2026
+NoSQL y SQL: dos mundos complementarios, no excluyentes
+ACID vs BASE: ¿Qué puedo tolerar?
+¿Lecturas desactualizadas?
+¿Transacciones distribuidas?
+¿Alta disponibilidad frente a precisión 
+inmediata?
+Ingeniería moderna de datos = enfoque 
+poliglota → Usar la herramienta adecuada 
+para cada parte del sistema.
+NoSQL nació como respuesta a desafíos modernos:
+Datos masivos (Big Data)
+Estructuras flexibles o cambiantes
+Altas tasas de acceso y distribución geográfica
+SQL sigue siendo esencial para:
+Datos bien estructurados
+Reglas complejas
+Transacciones críticas
+Elegir bien la tecnología 
+depende de:
+Volumen y velocidad de datos
+Tipo de consultas esperadas
+Necesidad de consistencia o 
+disponibilidad
+Escalabilidad y distribución 
+esperadas
+Costo y complejidad operativa
+
+
+--- DIAPOSITIVA / PÁGINA 26 ---
+Actividades
+2026
+Eligiendo bases
+¿Cuál base NoSQL elegirías? 
+• Describir brevemente cómo funciona su estructura de datos.
+• Identificar un proceso o necesidad de negocio real o ficticia 
+donde ese modelo sería especialmente útil.
+• Justificar por qué ese tipo de base NoSQL sería preferible a una 
+relacional en ese caso.
+• Señalar qué ventajas y limitaciones tiene la elección.
+• Representar, de forma visual o esquemática, cómo se organizarían 
+los datos en esa base para el caso elegido.
+
+--- DIAPOSITIVA / PÁGINA 27 ---
+BIBLIOGRAFIA
+Harrison, Guy (2015). Next Generation Databases: NoSQL, NewSQL, 
+and Big Data. Apress. (Capítulos 1 y 3: historia evolutiva de las bases de 
+datos y surgimiento de NoSQL).
+Pivert, Olivier (2018). NoSQL Data Models: Trends and Challenges. 
+Wiley-ISTE. (Sección 1.1: introducción a NoSQL, Big Data, teorema CAP y 
+modelo BASE vs ACID).
+Deka, Ganesh Chandra (2017). NoSQL: Database for Storage and 
+Retrieval of Data in Cloud. Chapman & Hall/CRC.
+Bradberry, Russell; Lubow, Eric (2013). Practical Cassandra: A 
+Developer’s Approach. Addison-Wesley. 
+AWS Database Blog (2023) – Comparativa: bases de datos relacionales 
+vs. no relacionales. 
+Apache Cassandra Case Studies (2023) – Página oficial del proyecto 
+Cassandra con casos de uso reales en industria. 
+Neo4j Developer Blog (2023) – Data Consistency Models: ACID vs. BASE 
+Explained, Neo4j.com. 
+Medium Blog – Bit Magic (2025). “Partial ACID: How Redis handles 
+Atomicity, Consistency & Isolation”. 
+
+

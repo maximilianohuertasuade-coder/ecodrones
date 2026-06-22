@@ -1,0 +1,600 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE02
+========================================================================
+
+--- DIAPOSITIVA / PÁGINA 1 ---
+Ingeniería de Datos II
+Analizar cómo la distribución y replicación de datos impactan 
+en la consistencia y disponibilidad de los sistemas, 
+introduciendo los modelos de consistencia y los principios 
+que luego serán formalizados mediante el teorema CAP .
+Distribución, consistencia 
+y disponibilidad
+2026
+Unidad 1
+Clase 2
+
+--- DIAPOSITIVA / PÁGINA 2 ---
+Distribuir datos significa almacenar y procesar la 
+información en múltiples ubicaciones o nodos 
+interconectados, en lugar de concentrarla en un 
+solo servidor central
+2026
+Distribución de Datos
+En un sistema distribuido, 
+múltiples nodos almacenan y 
+gestionan partes de los datos, 
+colaborando sin depender de un 
+único servidor central.
+Comparación entre una arquitectura centralizada (izquierda), 
+descentralizada (centro) y distribuida (derecha)
+
+--- DIAPOSITIVA / PÁGINA 3 ---
+Razones por las cuales se opta distribuir los datos 
+en lugar de centralizarlos en un único sitio.
+2026
+¿Por qué se distribuyen los datos?
+
+
+--- DIAPOSITIVA / PÁGINA 4 ---
+2026
+¿Por qué se distribuyen los datos?
+MEJORAR 
+RENDIMIENTO
+MAYOR 
+ESCALABILIDAD 
+HORIZONTAL
+RESILIENCIA
+ALTA 
+DISPONIBILIDAD
+Expande capacidad en forma incremental 
+(económica) a medida que crecen las 
+necesidades. Añanden nodos que 
+reparten la carga. Evita degradación al 
+aumentar volúmenes (datos-usuarios)
+Capacidad de seguir funcionando ante fallos parciales 
+mediante información replicada, evitando caída total del 
+servicio.
+Procesar grandes volúmenes de información de forma más 
+rápida y eficiente al dividir tareas entre nodos 
+(procesamiento en paralelo) – Reduce latencia y cómputos. 
+Datos más cerca de los puntos de consumo.
+
+--- DIAPOSITIVA / PÁGINA 5 ---
+2026
+¿Por qué se distribuyen los datos?
+MEJORAR 
+RENDIMIENTO
+MAYOR 
+ESCALABILIDAD 
+HORIZONTAL
+RESILIENCIA
+ALTA 
+DISPONIBILIDAD
+Expande capacidad en forma incremental 
+(económica) a medida que crecen las 
+necesidades. Añanden nodos que 
+reparten la carga. Evita degradación al 
+aumentar volúmenes (datos-usuarios)
+Capacidad de seguir funcionando ante fallos parciales 
+mediante información replicada, evitando caída total del 
+servicio.
+Procesar grandes volúmenes de información de forma más 
+rápida y eficiente al dividir tareas entre nodos 
+(procesamiento en paralelo) – Reduce latencia y cómputos. 
+Datos más cerca de los puntos de consumo.
+
+
+--- DIAPOSITIVA / PÁGINA 6 ---
+Desafíos de la distribución de datos
+SINCRONIZACIÓN
+COORDINACIÓN
+orquestación distribuida 
+consistencia
+Distribuir los datos conlleva un trade-off (obtener algo 
+sacrificando algo): se obtienen rendimiento escalable y alta 
+disponibilidad, a cambio de afrontar una mayor 
+complejidad en el control del sistema.
+Se refiere a la toma de decisiones conjunta o 
+reparto de tareas entre nodos – 
+Organización del trabajo, implementación de 
+protocolos para orquestar las tareas
+Se refiere al tiempo, mantener actualizados 
+los datos o acciones entre nodos en el 
+mismo momento o en el orden correcto, 
+garantizando coherencia de datos aunque se 
+opte por consistencia eventual.
+
+--- DIAPOSITIVA / PÁGINA 7 ---
+REPLICACION
+TIPOS DE REPLICACIÓN (Topologías)
+La replicación consiste en mantener copias 
+idénticas de una base de datos en múltiples 
+nodos o servidores
+RESILIENCIA
+ALTA DISPONIBILIDAD
+TOLERANCIA A FALLOS
+• Replicación Primaria-Secundaria (Master-Slave o 
+Activo-Pasivo): nodo primario (master) que acepta 
+todas las escrituras y uno o varios nodos 
+secundarios (replicas slave o pasivas). Proceso de 
+failover, en caso de falla, del primario un pasivo 
+toma el control.
+• Replicación Multi-Master 
+(Multi-primario o Activo-
+Activo): no hay un único 
+primario; varios nodos pueden 
+aceptar escrituras 
+simultáneamente; todos los 
+nodos son activos.
+
+--- DIAPOSITIVA / PÁGINA 8 ---
+REPLICACION
+TIPOS DE REPLICACIÓN (Topologías)
+• Ventajas: 
+• sin conflicto de escrituras
+• Lecturas se reparten entre primarios y 
+secundarios
+• Alta disponibilidad por conmutación de falla
+• Desafíos:
+• Primario es un cuello de botella para escrituras
+• Retraso de replicación entre secundarios si la 
+replicación es asíncrona (consistencia eventual)
+RESILIENCIA
+ALTA DISPONIBILIDAD
+TOLERANCIA A FALLOS
+• Replicación Primaria-Secundaria (Master-Slave o 
+Activo-Pasivo): nodo primario (master) que acepta 
+todas las escrituras y uno o varios nodos 
+secundarios (replicas slave o pasivas). Proceso de 
+failover, en caso de falla, del primario un pasivo 
+toma el control.
+• Replicación Multi-Master 
+(Multi-primario o Activo-
+Activo): no hay un único 
+primario; varios nodos pueden 
+aceptar escrituras 
+simultáneamente; todos los 
+nodos son activos.
+• Ventajas: 
+• Escalar escrituras y mayor disponibilidad (no hay 
+un solo punto crítico de fallo)
+• Geográficamente ventajoso
+• Desafíos:
+• Consistencia – conflictos de escritura
+• Consistencia eventual, propagación asíncrona. 
+No se garantiza en todos los nodos.
+
+--- DIAPOSITIVA / PÁGINA 9 ---
+
+--- DIAPOSITIVA / PÁGINA 10 ---
+MODOS DE REPLICACION
+Característica Síncrona Asíncrona
+Confirmación Espera a que todas (o algunas) réplicas 
+escriban Solo espera el nodo principal
+Consistencia Fuerte (sin pérdida en falla) Eventual (puede perder últimas escrituras)
+Latencia Alta (espera red/remotas) Baja (más rápida)
+Riesgo de pérdida Muy bajo Posible si falla el nodo antes de replicar
+Casos de uso típicos Finanzas, sistemas críticos Web, sistemas de alto rendimiento
+Ejemplos Google Spanner, Galera, Oracle DG (sync) MySQL, PostgreSQL, MongoDB, Redis (default) 
+Ventajas
+• Máxima consistencia (datos siempre 
+alineados)
+• Cero pérdida si falla el nodo principal
+• Alta performance y throughput
+• Menor latencia
+• Más tolerante a redes lentas
+Desventajas
+• Alta latencia en escrituras
+• Depende del estado de la red
+• Requiere infraestructura robusta
+• Riesgo de pérdida de datos recientes
+• Réplicas pueden quedar desactualizadas (lag)
+El maestro guarda los cambios y luego los replica 
+al esclavo en segundo plano. Esto mejora el 
+rendimiento, pero puede generar retrasos en la 
+sincronización y riesgo de pérdida si el maestro 
+falla.
+El maestro no considera completada una 
+operación hasta que al menos una réplica ha 
+confirmado también la escritura. Esto asegura 
+alta consistencia, pero puede afectar el 
+rendimiento.
+
+--- DIAPOSITIVA / PÁGINA 11 ---
+Actividad
+Simuladores de replicación
+Usando:
+- Docker
+- MongoDB
+- Jepsen Simulator
+2026
+Simular un entorno distribuido con MongoDB en Docker para 
+observar el funcionamiento de la replicación y analizar el 
+comportamiento del sistema ante fallos de nodos.
+
+--- DIAPOSITIVA / PÁGINA 12 ---
+PARTICIONAMIENTO (SHARDING)
+Objetivo 
+–
+ 
+lograr escalabilidad horizontal
+El particionamiento es una técnica para distribuir 
+los datos de una base de datos en varios nodos, 
+pero a diferencia de la replicación, dividiendo el 
+conjunto de datos en partes diferentes en lugar de 
+duplicarlo completo en cada nodo.
+Desafíos del Particionamiento 
+• Aumenta la complejidad operativa: los datos están 
+fragmentados en múltiples nodos.
+• Consultas complejas: algunas deben ir a varios shards y 
+combinar resultados.
+• Requiere conocer la clave de partición, o hacer 
+broadcast (costoso).
+• Riesgo de hot spots: si los datos no se reparten bien, 
+algunos shards se sobrecargan.
+• Escalar implica re-sharding, que puede ser costoso.
+• Difícil mantener integridad y transacciones entre shards.
+Esquemas de Particionamiento por Clave
+
+--- DIAPOSITIVA / PÁGINA 13 ---
+Replicación vs Particionamiento
+Aspecto Replicación Particionamiento (Sharding)
+Qué hacen con los 
+datos
+Cada nodo almacena una copia completa del 
+conjunto de datos.
+Cada nodo almacena solo una parte del 
+conjunto de datos.
+Meta principal Alta disponibilidad, tolerancia a fallos y mayor 
+capacidad de lectura.
+Escalabilidad, paralelismo y mejor rendimiento 
+global.
+Tolerancia a fallos Alta: si un nodo falla, otro puede responder con 
+los mismos datos.
+Baja sin replicación: si un shard cae, sus datos 
+se pierden temporalmente.
+Impacto en 
+escritura/lectura
+Las escrituras no se aceleran; las lecturas se 
+distribuyen entre réplicas.
+Las escrituras se reparten y escalan; las lecturas 
+complejas pueden ser lentas.
+Complejidad para 
+la aplicación
+Generalmente transparente para el cliente. El 
+sistema maneja failover y lecturas.
+Mayor complejidad: el sistema o cliente debe 
+saber a qué shard consultar.
+Ejemplo 3 nodos → cada uno almacena 75 GB (total 225 
+GB, con redundancia).
+3 nodos → cada uno almacena ~25 GB distintos 
+(total 75 GB, sin redundancia).
+
+
+--- DIAPOSITIVA / PÁGINA 14 ---
+MODELOS DE 
+CONSISTENCIA 
+EN SISTEMAS 
+DISTRIBUIDOS
+2026
+CONSISTENCIA FUERTE
+CONSISTENCIA EVENTUAL
+LECTURA 
+DESPUÉS DE 
+ESCRITURA 
+LECTURAS Y 
+ESCRITURAS 
+MONÓTONAS 
+
+--- DIAPOSITIVA / PÁGINA 15 ---
+Consistencia fuerte (
+Strong
+ 
+Consistency
+)
+WRITE
+U1: X = 1
+READ
+U1: X = 1
+WRITE
+U2: X = 2
+U1: X = 1
+U1: X = 1
+X = 1 ACK OK
+COMMIT 
+X = 1
+X = 1 OK
+La consistencia fuerte garantiza que todas las lecturas vean siempre el 
+dato más reciente que se haya escrito (como si existiera una única copia)
+Esto significa que una vez confirmada una escritura, cualquier 
+lectura posterior (desde cualquier nodo) obtendrá ese valor 
+actualizado más reciente.
+ Beneficio
+Orden global
+Sin datos 
+obsoletos o 
+anomalías de 
+lectura
+Datos 
+coherentes
+Desventajas
+Mayor latencia
+Menos disponibilidad 
+ante fallos (bloquea 
+sincronización)
+Costos y complejidad 
+altos
+RDBMS - ACID
+
+
+--- DIAPOSITIVA / PÁGINA 16 ---
+Nivel 
+Session
+Lectura después de escritura (
+Read
+-
+Your
+-
+Writes
+)
+WRITE
+U1: X = “Postx”
+READ
+U1: X = “Postx”
+Replicación
+Asincrónica
+X = “Postx” OK
+READ
+U1: X ≠ “Postx”
+La consistencia Read-Your-Writes es una 
+garantía centrada en el cliente que asegura que 
+después de que un cliente realice una escritura, 
+cualquier lectura subsecuente hecha por ese 
+mismo cliente incluirá ese cambio. 
+Es una propiedad a nivel de sesión/usuario, más débil que la consistencia fuerte global, pero que 
+evita una anomalía frustrante: escribir algo y no verlo reflejado en tu siguiente lectura
+ Beneficio
+Experiencia de 
+usuario 
+coherente.
+Consistencia a 
+nivel de usuario.
+Evita pérdida de 
+datos a nivel 
+cliente.
+Desventajas
+No garantiza 
+consistencia global.
+Sincronización y 
+token de versión para 
+cliente activo.
+Redes Sociales
+TOKEN
+STICKY SESSION
+Si escribís algo, vos lo 
+ves inmediatamente.
+No garantiza que otros 
+lo vean.
+
+--- DIAPOSITIVA / PÁGINA 17 ---
+Consistencia eventual (
+Eventually
+ 
+Consistent
+)
+Replicación
+Asincrónica
+WRITE
+U3: X = 3
+READ
+U2: X = 2
+La consistencia eventual es un 
+modelo de consistencia débil donde el 
+sistema no garantiza que todas las 
+réplicas coincidan en todo momento, 
+pero asegura que si no se hacen nuevas 
+actualizaciones en algún momento 
+todas las copias tendrán el mismo valor 
+(convergencia). 
+Pueden existir discrepancias. Un cliente podría leer datos obsoletos en alguna réplica. Es utilizado 
+en sistemas tolerantes a fallos. Prioriza disponibilidad y rendimiento sobre consistencia.
+ Beneficio
+Alto rendimiento, 
+disponibilidad y 
+resiliencia.
+Baja latencia.
+Escalable 
+globalmente.
+Desventajas
+Puede devolver 
+datos viejos.
+Requiere manejo 
+de conflictos.
+Orden no 
+garantizado.
+DNS
+RS : retweets 
+
+
+--- DIAPOSITIVA / PÁGINA 18 ---
+Lecturas y escrituras monótonas (
+Monotonic
+ 
+Reads
+/
+Writes
+)
+En lecturas monótonas, el cliente siempre lee al menos lo último que ya 
+vio, o una versión más reciente. Nunca retrocede a una versión anterior.
+En escrituras monótonas, si un cliente introduce un dato y luego introduce otro, el sistema 
+garantiza que se aplicarán en ese mismo orden. Una vez introducido un dato, ese será el 
+último introducido por ese cliente hasta que él mismo escriba otro posterior.
+ Beneficio
+Orden temporal 
+coherente
+Mejor 
+experiencia de 
+consistencia 
+(confianza)
+Desventajas
+No garantiza último 
+valor global
+Garantizar 
+escrituras 
+monótonas puede 
+reducir algo la 
+concurrencia 
+Consistencia causal 
+Nivel 
+Session
+
+--- DIAPOSITIVA / PÁGINA 19 ---
+Disponibilidad vs Consistencia
+CONSISTENCIA FUERTE
+ CONSISTENCIA EVENTUAL
+READ-YOUR-WRITESMONOTONIC READs-WRITEs
+MAYOR DISPONIBILIDAD  - MAYOR RENDIMIENTO – MENOR LATENCIA
+MAYOR CONSISTENCIA  - MAYOR COHERENCIA – MAYOR LATENCIA
+C
+O
+N
+T
+R
+O
+L
+E
+S
+C
+A
+L
+A
+B
+I
+L
+I
+D
+A
+D
+TOLERANCIA
+A FALLOS
+** Trade-off entre consistencia y disponibilidad/latencia
+¿Qué sucede si una red se divide (partición) o un nodo se cae? 
+
+--- DIAPOSITIVA / PÁGINA 20 ---
+Disponibilidad vs Consistencia
+• Priorizar consistencia: detener o limitar las 
+operaciones hasta que los nodos puedan 
+comunicarse de nuevo para sincronizar datos. 
+Esto garantiza que el estado permanezca 
+consistente en todas las réplicas, pero el sistema 
+deja de estar disponible para algunas operaciones 
+durante la caída. En otras palabras, el sistema 
+elige estar “en lo correcto pero inactivo”.
+¿Qué sucede si una red se divide (partición) o un nodo se cae? 
+• Priorizar disponibilidad: permitir que cada partición aislada o nodo siga operando y respondiendo 
+a clientes con la información que tenga, incluso si está potencialmente desactualizada respecto a 
+otras partes. Así el sistema continúa funcionando (alta disponibilidad), pero los datos pueden 
+divergir temporalmente, rompiendo la consistencia global. Es decir, el sistema opta por estar 
+“activo pero posiblemente equivocado”.
+
+
+--- DIAPOSITIVA / PÁGINA 21 ---
+Disponibilidad vs Consistencia
+Enfoque AP (Alta Disponibilidad) CP (Alta Consistencia)
+Prioriza Disponibilidad + respuesta 
+continua Estado único y coherente
+Sacrifica Consistencia inmediata Disponibilidad temporal
+¿Qué ocurre durante la 
+partición?
+Cada nodo sigue aceptando 
+operaciones aunque no pueda 
+verificar el estado global
+El sistema bloquea o rechaza 
+operaciones hasta recuperar 
+sincronización
+Ejemplos reales Twitter/X timeline, Facebook likes, 
+Amazon carrito de compras, DNS
+Sistemas bancarios, exchanges, 
+Google Spanner, Zookeeper
+¿Cuándo conviene?
+Cuando la experiencia continua del 
+usuario es más importante que la 
+precisión inmediata
+Cuando una respuesta incorrecta 
+es peor que ninguna respuesta
+
+
+--- DIAPOSITIVA / PÁGINA 22 ---
+CAP
+
+
+--- DIAPOSITIVA / PÁGINA 23 ---
+El Teorema CAP establece que un sistema 
+distribuido, bajo condiciones de fallos de 
+red, solo puede garantizar dos de tres 
+propiedades: Consistencia, Disponibilidad 
+y Tolerancia a particiones. 
+2026
+Teorema de CAP
+Eric Brewer
+Disponibilidad (A) – Availability: el sistema siempre 
+responde a las solicitudes de los clientes, incluso si uno o 
+varios de sus nodos fallan. Cada petición recibe alguna 
+respuesta válida. 
+Tolerancia a particiones (P) – Partition Tolerance: el sistema 
+sigue funcionando a pesar de que hayan fracturas en la red, 
+incluso si los nodos quedan aislados.
+Consistencia (C) – Consistency / 
+Coherencia: significa que todos los nodos 
+del sistema ven la misma información al 
+mismo tiempo. Los cambios se replican 
+inmediatamente.
+
+--- DIAPOSITIVA / PÁGINA 24 ---
+Actividad
+Aplicando el Teorema CAP a 
+Procesos de Negocio
+2026
+Objetivo:
+Identificar cómo las decisiones técnicas en sistemas 
+distribuidos deben alinearse con las necesidades del negocio, 
+utilizando el teorema CAP como herramienta de análisis.
+
+--- DIAPOSITIVA / PÁGINA 25 ---
+BIBLIOGRAFIA
+Harrison, Guy (2015). Next Generation Databases: NoSQL, NewSQL, 
+and Big Data. Apress. (Capítulos 1 y 3: historia evolutiva de las bases de 
+datos y surgimiento de NoSQL).
+Kleppmann, Martin – Designing Data-Intensive Applications, O’Reilly 
+Media, 2017.
+Stonebraker, Michael – Artículos sobre la evolución del modelo 
+relacional y bases distribuidas.
+Apache Cassandra Case Studies (2023) – Página oficial del proyecto 
+Cassandra con casos de uso reales en industria. 
+Neo4j Developer Blog (2023) – Data Consistency Models: ACID vs. BASE 
+Explained, Neo4j.com. 
+Medium Blog – Bit Magic (2025). “Partial ACID: How Redis handles 
+Atomicity, Consistency & Isolation”. 
+Google Cloud y Amazon Web Services (AWS) – Whitepapers sobre 
+arquitecturas distribuidas, consistencia y replicación.
+Teorema CAP – Resumen de la formulación original de Eric Brewer (2000), 
+y “Brewer’s Conjecture and the Feasibility of Consistent, Available, 
+Partition-Tolerant Web Services” (Gilbert & Lynch, 2002).
+
+
+--- DIAPOSITIVA / PÁGINA 26 ---
+PROXIMA CLASE
+Clase 3 – Modelo documental y consultas 
+NoSQL: MongoDB como eje práctico
+Tema:
+Actividad: Presentaciones de los grupos
+Modelos NoSQL: visión general y comparativa.
+Introducción al modelo documental.
+MongoDB / MQL:
+– Estructura documental
+– CRUD básico
+– Consultas simples
+– Escalabilidad y desnormalización
+Ejercitación guiada.
+

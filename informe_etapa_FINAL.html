@@ -67,7 +67,7 @@
         <h2>2. Resumen Ejecutivo</h2>
         <p>Las sierras de Córdoba enfrentan incendios forestales recurrentes que amenazan la biodiversidad local y las comunidades aledañas. Los mecanismos actuales de detección tienen latencias de horas, insuficientes para una respuesta oportuna.</p>
         <p><strong>EcoDrones</strong> es una plataforma de vigilancia ambiental que integra 3 drones autónomos con sensores diferenciados, dos bases de datos NoSQL (MongoDB y Neo4j) y un dashboard táctico en tiempo real. La solución detecta anomalías térmicas en menos de 1 segundo, predice la propagación del fuego mediante análisis de grafos e identifica automáticamente la fauna en peligro.</p>
-        <p>El valor de la arquitectura reside en la integración bidireccional: MongoDB ingiere telemetría masiva a alta velocidad mientras Neo4j resuelve consultas de propagación y relaciones ecológicas que serían costosas en un modelo relacional. Cada motor cumple un rol específico y se potencian mutuamente.</p>
+        <p>El valor de la arquitectura reside en la integración bidireccional: MongoDB ingiere telemetría masiva a alta velocidad mientras Neo4j resuelve consultas de propagación y relaciones ecológicas que serían costosas en un modelo relacional. Esta <strong>arquitectura de persistencia políglota</strong> asigna a cada motor un rol especializado según la naturaleza del dato, siguiendo el principio de <strong>diseño orientado a consultas</strong>: primero se identificaron los patrones de acceso y luego se diseñaron las estructuras optimizadas para responderlos.</p>
     </div>
 
     <!-- ══════ 3. ALCANCE DEFINITIVO ══════ -->
@@ -115,6 +115,9 @@
     <!-- ══════ 5. DATASET ══════ -->
     <div class="section">
         <h2>5. Dataset Utilizado (Simulado)</h2>
+        <h3>Contexto Big Data — Las 5V</h3>
+        <p>EcoDrones se enmarca en las 5 dimensiones del Big Data: <strong>Volumen</strong> (259.200 docs/día, escalable a millones con más drones), <strong>Velocidad</strong> (3 docs/seg en near-real-time), <strong>Variedad</strong> (esquema flexible por modelo de dron + grafo topológico + GeoJSON), <strong>Veracidad</strong> (modelo físico correlacionado, no aleatorio) y <strong>Valor</strong> (detección temprana de incendios para proteger ecosistemas y comunidades).</p>
+
         <h3>Criterio de simulación</h3>
         <p>Los datos son generados por <code>simulador_continuo.py</code> usando un modelo físico de decaimiento exponencial de temperatura según la distancia al foco de incendio (ZONA_003). No son datos aleatorios triviales: las variables están correlacionadas físicamente (a mayor cercanía al foco → mayor temperatura, mayor CO₂, menor humedad, mayor velocidad de viento).</p>
         
@@ -155,44 +158,9 @@
     <!-- ══════ 6. ARQUITECTURA ══════ -->
     <div class="section">
         <h2>6. Arquitectura General de la Solución</h2>
-        <div class="diagram">
-┌───────────────────────────────────────────────────────────────────────┐
-│                      ARQUITECTURA ECODRONES                           │
-├───────────────────────────────────────────────────────────────────────┤
-│                                                                       │
-│  FUENTES DE DATOS          INGESTA             ALMACENAMIENTO         │
-│  ┌─────────────────┐                                                  │
-│  │ simulador_       │      insert_one()   ┌────────────────────┐     │
-│  │ continuo.py      │───────────────────▶ │   MongoDB :27017   │     │
-│  │                  │    3 docs/seg        │  • telemetria      │     │
-│  │ DRON_ALPHA (Eco) │                     │  • alertas_disp.   │     │
-│  │ DRON_BETA (Pro)  │                     └─────────┬──────────┘     │
-│  │ DRON_GAMMA (Scout)│                              │                 │
-│  └─────────────────┘                               │ poll cada 1s    │
-│                                                     ▼                 │
-│  ANÁLISIS                  INTEGRACIÓN    ┌────────────────────┐     │
-│  ┌─────────────────┐                     │ monitor_alertas.py │     │
-│  │   Neo4j :7687    │◀── Cypher query ───│                    │     │
-│  │  • :Zona (6)     │                    │ • Detecta >45°C    │     │
-│  │  • :Especie (7)  │── resultado ──────▶│ • Write-back Mongo │     │
-│  │  • :Dron (3)     │   fauna+propag     │ • MERGE Neo4j      │     │
-│  │  • :Lectura      │                    └────────────────────┘     │
-│  │  • :Alerta       │                              │                 │
-│  └─────────────────┘                               │                 │
-│                                                     ▼                 │
-│  PRESENTACIÓN              CONSUMIDORES   ┌────────────────────┐     │
-│                                           │   dashboard.py     │     │
-│  Operadores de emergencia ◀───────────── │  • Monitoreo       │     │
-│  Biólogos                                │  • Alertas         │     │
-│  Planificadores                          │  • Mapa Operativo  │     │
-│                                           │  • Propagación     │     │
-│                                           └────────────────────┘     │
-│                                                                       │
-│  INFRAESTRUCTURA: Docker Desktop (contenedores MongoDB + Neo4j)       │
-│  ORQUESTACIÓN: iniciar_servicios.bat / detener_servicios.bat          │
-└───────────────────────────────────────────────────────────────────────┘
-        </div>
-        <p class="diagram-cap">Figura 1: Arquitectura de la solución mostrando fuentes, ingesta, almacenamiento, análisis, integración y consumidores.</p>
+
+        <img src="Arquitectura General.png" alt="Diagrama de Arquitectura EcoDrones" style="width:100%; border-radius:8px; margin: 14px 0;">
+        <p class="diagram-cap">Figura 1: Arquitectura de la solución. De izquierda a derecha: fuentes de datos (3 drones con hardware diferenciado), flujo de ingesta (insert_one a 3 docs/seg), almacenamiento en MongoDB (esquema flexible, GeoJSON), análisis y predicción (reglas de alerta >45°C + traversal Neo4j), visualización en dashboard táctico (4 pestañas), y receptores finales (operadores de emergencia y biólogos). Infraestructura: Docker Desktop con contenedores MongoDB y Neo4j, orquestada por scripts .bat.</p>
 
         <h3>Recorrido del dato</h3>
         <ol>
@@ -216,17 +184,20 @@
             </tbody>
         </table>
         <h3>Justificación de cada motor</h3>
+        <p>EcoDrones implementa una <strong>arquitectura de persistencia políglota</strong> donde cada motor tiene una responsabilidad definida según la naturaleza del dato y las consultas que debe responder:</p>
         <ul>
-            <li><strong>MongoDB:</strong> Elegido por su rendimiento de escritura masiva (3 docs/seg sin esquema rígido), soporte nativo GeoJSON (índices 2dsphere), objetos embebidos que evitan JOINs, y esquema flexible que permite sensores diferentes por dron sin migración.</li>
-            <li><strong>Neo4j:</strong> Elegido porque la propagación de incendios es un problema de grafos: se propaga por relaciones de vecindad con atributos (dirección, distancia, probabilidad). Traversals de 2 saltos con filtro son triviales en Cypher e imposibles eficientemente en SQL sin self-JOINs recursivos.</li>
+            <li><strong>MongoDB (fuente de verdad operativa):</strong> Elegido por su rendimiento de escritura masiva (3 docs/seg sin esquema rígido), soporte nativo GeoJSON (índices 2dsphere), objetos embebidos que evitan JOINs, y esquema flexible que permite sensores diferentes por dron sin migración. Es la fuente de verdad para telemetría y alertas.</li>
+            <li><strong>Neo4j (fuente de verdad ecológica):</strong> Elegido porque la propagación de incendios es un problema de grafos: se propaga por relaciones de vecindad con atributos (dirección, distancia, probabilidad). En Neo4j, las <strong>relaciones son ciudadanos de primera clase</strong> con propiedades propias, permitiendo traversals de 2 saltos con filtro que en SQL requerirían self-JOINs recursivos. Es la fuente de verdad para topología y biodiversidad.</li>
         </ul>
+        <p>La <strong>aplicación Python actúa como coordinadora</strong> del acceso a datos (patrón de persistencia políglota coordinada): el <code>monitor_alertas.py</code> decide cuándo leer MongoDB, cuándo invocar Neo4j, y cómo combinar los resultados mediante los drivers oficiales <code>pymongo</code> y <code>neo4j-driver</code>.</p>
     </div>
 
     <!-- ══════ 8. DISEÑO DE ESTRUCTURAS ══════ -->
     <div class="section">
         <h2>8. Diseño Final de Estructuras de Datos</h2>
+        <p>El diseño sigue el principio de <strong>diseño orientado a consultas</strong> (query-driven design): primero se identificaron los 6 patrones de consulta (Sección 9) y luego se diseñaron las estructuras optimizadas para responderlos. Se aplica <strong>desnormalización deliberada</strong> y el patrón de <strong>embedding</strong> (objetos embebidos) para evitar JOINs y garantizar que cada lectura de disco retorne toda la información necesaria en una sola operación.</p>
         
-        <h3>8.1 MongoDB — Colección: <code>telemetria</code></h3>
+        <h3>8.1 MongoDB — Colección: <code>telemetria</code> (serie temporal IoT)</h3>
         <h4>Documento ejemplo (DRON_BETA con sensores exclusivos):</h4>
         <div class="code">{
   "drone_id": "DRON_BETA",
@@ -272,6 +243,7 @@ db.telemetria.find({cod_zona: "ZONA_003"})
 </div>
 
         <h3>8.2 MongoDB — Colección: <code>alertas_disparadas</code></h3>
+        <p>El campo <code>analisis_neo4j</code> embebido es un ejemplo de <strong>desnormalización deliberada</strong>: se duplica información que ya existe en Neo4j para evitar consultas cross-database en cada refresco del dashboard. Se acepta duplicación a cambio de rendimiento de lectura (patrón embedding por acceso conjunto).</p>
         <div class="code">
 {
   "timestamp_alerta": "2026-06-17T14:30:01Z",
@@ -418,64 +390,45 @@ RETURN z1.nombre, collect(DISTINCT e1.nombre_comun),
         <p>Las siguientes evidencias demuestran que la solución fue implementada y probada:</p>
 
         <h3>Evidencia 1: Simulador generando telemetría diferenciada</h3>
-        <div class="code">🟢 [DRON_ALPHA] en ZONA_004 (Dique El Cajón) -> Temp: 22.2°C | CO2: 408.7 ppm | Viento: 14.0 km/h a 102°
-🟢 [DRON_BETA] en ZONA_005 (Paso del Indio) -> Temp: 24.5°C | CO2: 452.1 ppm | Viento: 12.9 km/h a 82° | UV: 3.4 | Presión: 1012.1 hPa
-🔥 [DRON_GAMMA] en ZONA_003 (Base Uritorco) -> Temp: 57.3°C | CO2: 1180.5 ppm | Viento: 32.5 km/h a 95° | Luz: 210.5 lux | PM2.5: 145.8 μg/m³</div>
-        <p><em>Se observa que cada dron tiene sensores distintos (Beta: UV+Presión, Gamma: Luz+PM2.5) y que Gamma detecta temperatura crítica en Zona 3.</em></p>
+        <img src="capturas/01_simulador_sensores_diferenciados.PNG" alt="Simulador con sensores diferenciados" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Se observa que cada dron tiene sensores distintos: ALPHA solo muestra datos base, BETA agrega UV + Presión, y GAMMA agrega Luz + PM2.5. Esto demuestra el esquema flexible de MongoDB: documentos con estructura diferente en la misma colección.</em></p>
 
         <h3>Evidencia 2: Monitor disparando alerta con análisis de Neo4j</h3>
-        <div class="code">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-🚨 ALERTA TEMPRANA DE INCENDIO DETECTADA POR DRON_GAMMA 🚨
-📍 Zona Afectada: ZONA_003 - Base Uritorco | 🌡️ Temp: 57.3°C
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        <img src="capturas/02 Monitor con alerta + fauna + propagación.PNG" alt="Monitor alerta fauna propagacion" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>El monitor detectó una anomalía térmica (>45°C) en MongoDB, consultó Neo4j para obtener propagación y fauna, y reporta: Puma y Lobito de Río en riesgo directo, propagación hacia Centro Capilla (2km) y Los Terrones (4km) con fauna a evacuar. Demuestra la integración MongoDB → Neo4j en tiempo real.</em></p>
 
-🐾 FAUNA EN RIESGO DIRECTO:
-  • Lobito de Río [IUCN: NT]
-  • Puma [IUCN: LC]
+        <h3>Evidencia 3: Dashboard pestaña Monitoreo</h3>
+        <img src="capturas/03 Dashboard pestaña Monitoreo.PNG" alt="Dashboard Monitoreo" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Tres tarjetas con datos en vivo de cada dron. Se aprecia visualmente que BETA tiene sensores UV + Presión y GAMMA tiene Luz + PM2.5 como filas adicionales que ALPHA no posee. Cada tarjeta muestra modelo de hardware, zona actual, coordenadas GPS y estado de batería.</em></p>
 
-🔥 RIESGO DE PROPAGACIÓN INMINENTE HACIA:
-  ➔ Centro Capilla (2.0 km)
-    🐾 Fauna a evacuar: Lobito de Río</div>
-        <p><em>El monitor detectó la anomalía en MongoDB, consultó Neo4j para propagación y fauna, y reporta el resultado integrado.</em></p>
+        <h3>Evidencia 4: Dashboard pestaña Mapa Operativo</h3>
+        <img src="capturas/04 Dashboard pestaña Mapa Operativo.PNG" alt="Dashboard Mapa Operativo" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Mapa satelital real de Capilla del Monte con posición GPS de los drones (marcadores dinámicos), iconos de fuego/humo en Zona 3 (Base Uritorco), 6 zonas etiquetadas y leyenda táctica. Las posiciones se actualizan cada segundo desde MongoDB.</em></p>
 
-        <h3>Evidencia 3: Documento de alerta en MongoDB con análisis embebido</h3>
-        <div class="code">db.alertas_disparadas.findOne({}, {sort: {_id: -1}})
-{
-  "_id": ObjectId("..."),
-  "timestamp_alerta": "2026-06-17T14:30:01Z",
-  "drone_id": "DRON_GAMMA",
-  "cod_zona": "ZONA_003",
-  "temperatura_registrada": 57.3,
-  "co2_registrado": 1180.5,
-  "atendido_por_brigada": false,
-  "analisis_neo4j": {
-    "zona_nombre": "Base Uritorco",
-    "fauna_local": [{"comun": "Lobito de Río", "iucn": "NT"}, {"comun": "Puma", "iucn": "LC"}],
-    "rumbo_propagacion": "Oeste",
-    "zonas_en_cascada": [{"nombre": "Centro Capilla", "distancia_km": 2.0, "fauna": [...]}]
-  }
-}</div>
-        <p><em>El campo analisis_neo4j demuestra la integración: datos de Neo4j persistidos dentro de MongoDB.</em></p>
+        <h3>Evidencia 5a: Dashboard pestaña Propagación — Mapa de Riesgo (Neo4j)</h3>
+        <img src="capturas/05a_dashboard_propagacion_arriba.png..PNG" alt="Dashboard Propagacion grilla" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Grilla de riesgo en tiempo real coloreada según análisis de Neo4j: Z3 en rojo (incendio), Z2 en naranja (propagación directa), Z1 en amarillo (propagación en cascada). Badge "DATOS EN VIVO DESDE NEO4J" indica que la consulta Cypher se ejecuta en cada ciclo de refresco.</em></p>
 
-        <h3>Evidencia 4: Grafo en Neo4j Browser</h3>
-        <div class="code">// Consulta ejecutada en Neo4j Browser (http://localhost:7474)
-MATCH (z:Zona)-[r:LIMITA_CON]->(v:Zona)
-OPTIONAL MATCH (e:Especie)-[:HABITA_EN]->(z)
-RETURN z, r, v, e
+        <h3>Evidencia 5b: Dashboard pestaña Propagación — Saltos y fauna</h3>
+        <img src="capturas/05b_dashboard_propagacion_abajo.png" alt="Dashboard Propagacion saltos" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Detalle de propagación: Salto 1 hacia Centro Capilla (2km, prob 40%, fauna: Lobito de Río) y Salto 2 hacia Los Terrones (4km, prob 16%, fauna: Vizcacha Serrana, Zorro Gris). El análisis persiste aunque el dron se aleje de la zona de incendio.</em></p>
 
-// Resultado: Grafo visual con 6 zonas conectadas, 7 especies distribuidas,
-// relaciones bidireccionales con propiedades de dirección y distancia.</div>
-        <p><em>El grafo muestra las 6 zonas, 7 especies y las relaciones LIMITA_CON con direcciones cardinales visibles.</em></p>
+        
+        <h3>Evidencia 6: MongoDB — Documento de alerta con análisis Neo4j embebido (Write-back)</h3>
+        <img src="capturas/07_mongodb_alerta_con_analisis.pn.PNG" alt="MongoDB alerta con analisis_neo4j" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>El campo <code>analisis_neo4j</code> contiene el resultado del traversal de Neo4j (zona vecina, probabilidad, fauna) embebido directamente dentro del documento de MongoDB. Esto demuestra la integración bidireccional: Neo4j analiza y MongoDB persiste el resultado como subdocumento desnormalizado.</em></p>
 
-        <h3>Evidencia 5: Dashboard Pestaña Propagación (Neo4j en vivo)</h3>
-        <p>La pestaña "🔥 Propagación" del dashboard muestra en tiempo real:</p>
-        <ul>
-            <li>Mapa de riesgo coloreado (grilla 3×2): Z3 en rojo, Z2 en naranja, Z1 en amarillo</li>
-            <li>Fauna en riesgo directo con chips de categoría IUCN</li>
-            <li>Saltos de propagación con probabilidad y distancia</li>
-            <li>Panel de acciones de respuesta recomendadas</li>
-        </ul>
-        <p><em>Esta pestaña demuestra la consulta a Neo4j en cada ciclo de refresco del dashboard.</em></p>
+        <h3>Evidencia 7: MongoDB — Esquema flexible (BETA con sensores extra)</h3>
+        <img src="capturas/08a_mongo_beta.png" alt="MongoDB DRON_BETA con sensores extra" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>DRON_BETA (Hexacopter-V3-Pro) tiene 7 campos en <code>lecturas_sensores</code>: los 5 básicos + <code>radiacion_uv_indice</code> + <code>presion_atmosferica_hpa</code>.</em></p>
+
+        <h3>Evidencia 8: MongoDB — Esquema flexible (ALPHA sin sensores extra)</h3>
+        <img src="capturas/08b_mongo_alpha.png" alt="MongoDB DRON_ALPHA sin sensores extra" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>DRON_ALPHA (Hexacopter-V2-Eco) tiene solo 5 campos en <code>lecturas_sensores</code>. Ambos documentos coexisten en la misma colección sin esquema rígido. En una base relacional esto requeriría ALTER TABLE o tablas separadas.</em></p>
+
+        <h3>Evidencia 9: Neo4j Browser — Grafo del ecosistema</h3>
+        <img src="capturas/06_neo4j_browser_grafo.png.png" alt="Neo4j Browser grafo visual" style="width:75%; max-width:700px; border-radius:6px; margin:14px auto; display:block; border:1px solid #333;">
+        <p><em>Visualización del grafo en Neo4j Browser: 6 zonas (celeste) conectadas con relaciones [:LIMITA_CON] bidireccionales, y 7 especies (violeta) vinculadas mediante [:HABITA_EN]. Las relaciones tienen propiedades de dirección cardinal y distancia.</em></p>
     </div>
 
     <!-- ══════ 11. FLUJO INTEGRADO ══════ -->
@@ -517,11 +470,11 @@ RETURN z, r, v, e
         <table>
             <thead><tr><th>Aspecto</th><th>MongoDB</th><th>Neo4j</th></tr></thead>
             <tbody>
-                <tr><td><strong>Particionamiento</strong></td><td>Shard key: <code>{drone_id: 1, timestamp: 1}</code>. Al crecer la flota, nuevos shards absorben nuevos drones.</td><td>No aplica (grafo estático pequeño). Solo nodos dinámicos crecen.</td></tr>
-                <tr><td><strong>Replicación</strong></td><td>Replica Set 3 nodos: 1 primario (escrituras) + 2 secundarios (lecturas del dashboard).</td><td>Causal Clustering: 1 core (escrituras) + read replicas (consultas del dashboard).</td></tr>
-                <tr><td><strong>TTL / Retención</strong></td><td>Telemetría cruda: TTL 30 días. Alertas: sin expiración (valor histórico).</td><td>Poda de nodos :Lectura > 7 días. Nodos estáticos permanentes.</td></tr>
-                <tr><td><strong>Consistencia</strong></td><td colspan="2">Consistencia Eventual (modelo AP del teorema CAP). Justificación: telemetría inmutable (append-only), enriquecimiento tolera 1-2s de delay, dashboard tolera datos ligeramente desactualizados (refresco 2s).</td></tr>
-                <tr><td><strong>Tolerancia a fallos</strong></td><td>Si MongoDB cae, se pierde ingestión pero no datos (volumen Docker persiste). Restart automático.</td><td>Si Neo4j cae, el sistema sigue detectando alertas pero sin análisis de propagación hasta recuperación.</td></tr>
+                <tr><td><strong>Particionamiento</strong></td><td>Sharding horizontal con shard key compuesta: <code>{drone_id: 1, timestamp: 1}</code>. El campo drone_id distribuye uniformemente (3 drones = 3 chunks iniciales, escalable a N drones). Agregar timestamp evita el <strong>hot spot</strong> que ocurriría si solo se usara timestamp como clave (todas las escrituras del "ahora" irían al mismo chunk). Con shard key compuesta, se logra <strong>escalabilidad horizontal</strong>: agregar nodos al cluster para absorber más drones sin re-diseño.</td><td>No aplica (grafo estático pequeño). Solo nodos dinámicos crecen.</td></tr>
+                <tr><td><strong>Replicación</strong></td><td>Replica Set 3 nodos (modelo Primario-Secundario con failover automático por elección). Write concern: "majority" para alertas (quorum 2/3 nodos), "1" para telemetría (velocidad). Read concern: "local" para dashboard (baja latencia).</td><td>Causal Clustering: 1 core server (escrituras ACID) + read replicas para consultas del dashboard. Failover automático si el core cae.</td></tr>
+                <tr><td><strong>TTL / Retención</strong></td><td>Telemetría cruda (<strong>dato transitorio</strong>): TTL 30 días — pasado ese período, la lectura individual pierde valor operativo. Alertas (<strong>dato persistente</strong>): sin expiración, valor histórico y de auditoría.</td><td>Poda de nodos :Lectura > 7 días (dato transitorio del grafo). Nodos estáticos (Zona, Especie) permanentes.</td></tr>
+                <tr><td><strong>Consistencia</strong></td><td colspan="2"><strong>Modelo CP (Consistencia + Tolerancia a Particiones)</strong> del teorema CAP. Tanto MongoDB como Neo4j priorizan consistencia sobre disponibilidad: ante una partición de red, MongoDB con write concern "majority" rechaza escrituras sin quorum (pierde disponibilidad momentánea antes que aceptar datos inconsistentes). Neo4j es nativamente ACID. Sin embargo, para la telemetría (dato transitorio, append-only) se aplica semántica <strong>BASE</strong> (Basically Available, Soft state, Eventually consistent): el dashboard tolera lecturas ligeramente desactualizadas (refresco cada 2s) y la pérdida de una lectura individual se repone en el siguiente ciclo. Para las alertas (dato persistente, crítico) se exige semántica más cercana a <strong>ACID</strong>: write concern "majority" garantiza durabilidad antes de confirmar.</td></tr>
+                <tr><td><strong>Tolerancia a fallos</strong></td><td>MongoDB utiliza <strong>failover automático</strong>: si el nodo primario cae, los secundarios realizan una elección (election) para promover un nuevo primario en segundos. La telemetría no se pierde (volumen Docker persiste en disco).</td><td>Si Neo4j cae, el sistema sigue detectando alertas en MongoDB pero sin análisis de propagación hasta recuperación. El grafo se reconstruye desde cargar_neo4j.py.</td></tr>
                 <tr><td><strong>Reconstrucción</strong></td><td>mongodump / mongorestore para backup completo.</td><td>El grafo estático se reconstruye desde código (cargar_neo4j.py). Los nodos dinámicos se regeneran con el uso.</td></tr>
             </tbody>
         </table>
@@ -590,8 +543,9 @@ RETURN z, r, v, e
             <li>El modelo de grafos demostró su valor en traversals con atributos (dirección + distancia + probabilidad) que serían costosos en SQL.</li>
         </ul>
         <h3>Valor de la arquitectura NoSQL</h3>
+        <p>El principio rector fue el <strong>diseño orientado a consultas</strong>: cada estructura se diseñó para responder las preguntas del negocio, no para normalizar datos. Esto es el paradigma opuesto al modelo relacional donde primero se normaliza y después se consulta.</p>
         <ul>
-            <li><strong>MongoDB:</strong> Permitió ingestar 3 documentos/segundo sin esquema rígido, con objetos embebidos GeoJSON y sensores heterogéneos. Imposible con la misma simplicidad en SQL.</li>
+            <li><strong>MongoDB:</strong> Permitió ingestar 3 documentos/segundo sin esquema rígido, con objetos embebidos GeoJSON y sensores heterogéneos. La colección <code>telemetria</code> funciona como <strong>serie temporal</strong> nativa donde el ObjectId monotónico actúa como cursor temporal implícito. Imposible con la misma simplicidad en SQL.</li>
             <li><strong>Neo4j:</strong> Permitió responder "¿hacia dónde se propaga y qué fauna hay?" con una sola consulta Cypher de 2 saltos. En SQL requeriría múltiples self-JOINs recursivos con subconsultas.</li>
             <li><strong>Integración:</strong> El patrón write-back (resultado de Neo4j embebido en MongoDB) permite que el dashboard funcione con un solo motor en lectura, combinando lo mejor de ambos.</li>
         </ul>

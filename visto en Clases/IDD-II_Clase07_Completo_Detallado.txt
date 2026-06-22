@@ -1,0 +1,98 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE 07
+MODELO TABULAR Y DE COLUMNA ANCHA (WIDER-COLUMN STORES / APACHE CASSANDRA)
+========================================================================
+
+--- DIAPOSITIVA 1 ---
+IDD-II - Unidad 3 - Clase 7
+Distintos Modelos NoSQL: MODELO TABULAR Y DE COLUMNA ANCHA
+Objetivo pedagógico: Diseñar estructuras de datos orientadas a consultas en entornos distribuidos, utilizando CQL (Cassandra Query Language) para comprender el manejo de eventos masivos, series temporales y los compromisos fundamentales entre escalabilidad, consistencia y disponibilidad.
+Universidad Argentina de la Empresa (UADE) - Año 2026.
+
+--- DIAPOSITIVA 2 ---
+Bases de Datos de Columna Ancha (Modelo Tabular)
+Flexibilidad y escalabilidad extrema para grandes volúmenes de datos.
+Las bases de datos de columna ancha (wide-column o column family) representan un paradigma NoSQL optimizado para almacenar información masiva de forma distribuida de manera lineal.
+
+DIFERENCIA FUNDAMENTAL CON EL MODELO RELACIONAL (SQL):
+* Estructura Dinámica: A diferencia de SQL, que impone un esquema rígido global donde cada celda vacía penaliza el espacio o requiere un valor 'NULL', en el Modelo Tabular cada fila puede tener una configuración completamente diferente y dinámica de columnas. No existen filas idénticas en atributos si el caso de negocio no lo requiere.
+* Orientación Arquitectónica: Su diseño no prioriza relaciones perfectas ni integridad referencial fuerte entre entidades (no existen los JOINs de bases relacionales). Su foco absoluto es distribuir los bloques de datos eficientemente a través de un clúster de múltiples nodos independientes.
+
+--- DIAPOSITIVA 3 ---
+¿Qué problema resuelven?
+Diseñadas específicamente para la era de los datos continuos, masivos y distribuidos (Streaming y Series Temporales).
+Este modelo surge como la única respuesta viable en escenarios donde el modelo relacional tradicional se rompe, volviéndose ineficiente, lento y extremadamente costoso.
+
+CASOS DE USO PRINCIPALES:
+1. Eventos Digitales y Clickstreams: Registro en tiempo real de cada clic, interacción y movimiento de millones de usuarios simultáneos en aplicaciones globales.
+2. Telemetría e Internet de las Cosas (IoT): Captura constante y veloz de señales provenientes de miles de sensores físicos distribuidos geográficamente.
+3. Trazabilidad y Logs Técnicos: Auditoría ininterrumpida de infraestructuras críticas, redes y servidores.
+
+--- DIAPOSITIVA 4 ---
+Arquitectura Descentralizada y Distribuida: El Modelo en Anillo (Peer-to-Peer)
+Herramientas líderes como Apache Cassandra descartan la arquitectura tradicional de Maestro-Esclavo (Primary-Secondary) para adoptar un modelo totalmente plano en forma de anillo, diseñado para asegurar la resiliencia y eliminar puntos únicos de falla (Single Point of Failure).
+
+COMPONENTES CLAVE DEL ANILLO:
+* Nodo: Instancia de cómputo y almacenamiento individual que guarda una porción de los datos totales del sistema.
+* Clúster: Agrupación lógica de múltiples nodos interconectados que colaboran entre sí. Puede expandirse a través de múltiples centros de datos físicos (Multi-Data Center Availability).
+* Igualdad Absoluta: No existen nodos jerárquicos o de control superior. Todos los nodos del anillo ejecutan exactamente el mismo software y poseen las mismas capacidades operativas.
+
+--- DIAPOSITIVA 5 ---
+El Rol Crítico del Nodo Coordinador
+Cuando una aplicación cliente (por ejemplo, una API construida en Python) realiza una petición de lectura o escritura al clúster, puede conectarse libre y aleatoriamente a CUALQUIER nodo del anillo.
+
+FLUJO DE OPERACIÓN DEL COORDINADOR:
+1. El nodo que recibe la conexión de la aplicación se autoproclama "Nodo Coordinador" exclusivamente para esa petición puntual.
+2. El Coordinador aplica una función matemática de dispersión (Hash de Particionamiento de Cassandra, típicamente Murmur3Partitioner) sobre la clave de los datos solicitados.
+3. El resultado del Hash determina con precisión matemática exacta qué nodos físicos reales dentro del anillo son los responsables de almacenar o leer esa fila específica.
+4. El Coordinador rutea de forma inmediata la operación hacia dichos nodos y consolida la respuesta final hacia el cliente según el nivel de consistencia requerido.
+
+--- DIAPOSITIVA 6 ---
+Diseño Orientado a Consultas y Desnormalización Radical
+En el mundo NoSQL tabular, las reglas tradicionales de normalización lógica (1FN, 2FN, 3FN de Edgar Codd) quedan totalmente sin efecto. El paradigma cambia de forma drástica.
+
+* En SQL: Primero se modelan las entidades de negocio en tablas aisladas y luego se escriben consultas complejas uniendo tablas mediante JOINs.
+* En Cassandra: PRIMERO SE IDENTIFICAN LAS CONSULTAS EXACTAS QUE HARÁ LA APLICACIÓN, Y LUEGO SE DISEÑAN LAS TABLAS ESPECÍFICAS PARA CADA UNA DE ELLAS.
+
+Si la aplicación requiere responder a tres consultas distintas sobre un mismo conjunto de datos, la solución profesional consiste en diseñar tres tablas independientes, duplicando intencionalmente la información si es necesario (Desnormalización). La redundancia de datos es aceptada a cambio de velocidad absoluta en lecturas de orden O(1).
+
+--- DIAPOSITIVA 7 ---
+Sintaxis y Limitaciones de CQL (Cassandra Query Language)
+CQL posee una apariencia estética casi idéntica a SQL (utiliza palabras clave como SELECT, INSERT, UPDATE, DELETE), pero operativamente presenta restricciones arquitectónicas severas que un Ingeniero de Datos debe dominar:
+
+* NO EXISTEN LOS JOINs: Es imposible cruzar información entre dos tablas en tiempo de ejecución.
+* NO EXISTEN SUB_CONSULTAS: Toda la información requerida debe resolverse en una única lectura atómica a una sola tabla.
+* RESTRICCIONES EN EL WHERE: No se puede filtrar libremente por cualquier columna de la tabla. Las condiciones del bloque 'WHERE' están estrictamente limitadas y encadenadas a las columnas que fueron definidas originalmente como parte de la Clave Primaria.
+
+--- DIAPOSITIVA 8 ---
+Análisis de la Clave Primaria Compuesta: Partition Key y Clustering Key
+Para garantizar que un sistema masivo distribuido funcione en milisegundos, la Clave Primaria (`PRIMARY KEY`) en Cassandra se divide conceptualmente en dos componentes obligatorios con funciones técnicas distintas:
+
+1. PARTITION KEY (Clave de Partición):
+   * Responsabilidad única: Determinar la distribución física de los datos dentro del clúster.
+   * Mecanismo: El valor de esta columna pasa por el particionador matemático del anillo. El hash resultante define en qué nodo físico específico del clúster se guardará esa fila de datos.
+   * Objetivo: Lograr una distribución perfectamente uniforme de la carga de trabajo para evitar "hotspots" (nodos sobrecargados).
+
+2. CLUSTERING KEY (Clave de Ordenación/Compactación):
+   * Responsabilidad única: Determinar el ordenamiento físico y secuencial de los registros DENTRO del disco del nodo seleccionado.
+   * Mecanismo: Permite agrupar múltiples registros que comparten la misma Partition Key, ordenándolos bajo un criterio específico (por ejemplo, de forma cronológica descendente).
+   * Objetivo: Ideal para optimizar consultas por rangos de tiempo (Series Temporales).
+
+--- DIAPOSITIVA 9 ---
+PRÁCTICA DE LABORATORIO: PLATAFORMA DE EVENTOS DIGITALES Y AUDITORÍA
+Enunciado del Caso Práctico Aplicado:
+Una compañía global de comercio electrónico requiere implementar un sistema de auditoría y detección de riesgos capaz de registrar billones de eventos generados por los usuarios en tiempo real. Cada registro representa una acción atómica: inicios de sesión, búsquedas, agregado de productos al carrito, intentos y rechazos de pago, o alertas automáticas de fraude.
+
+Requerimientos del Ejercicio:
+1. Inicializar un clúster local o distribuido de Cassandra.
+2. Definir un Keyspace (contenedor lógico de almacenamiento equivalente a una base de datos) configurando la estrategia de replicación adecuada.
+3. Diseñar y crear las tablas en CQL optimizadas para las siguientes consultas críticas de negocio:
+   * Obtener todos los eventos realizados por un usuario específico ordenados cronológicamente desde el más reciente.
+   * Filtrar eventos de un tipo determinado ocurridos dentro de un rango de fechas exacto.
+4. Insertar un set de datos masivos simulados y validar mediante planes de ejecución que las lecturas no generen escaneos globales en el anillo, asegurando el rendimiento continuo del sistema.
+
+--- DIAPOSITIVA 10 ---
+BIBLIOGRAFÍA RECOMENDADA DE LA UNIDAD
+* Harrison, Guy (2015). Next Generation Databases: NoSQL, NewSQL, and Big Data. Apress. (Análisis profundo sobre la arquitectura interna de sistemas tabulares).
+* Bradberry, Russell & Lubow, Eric (2013). Practical Cassandra: A Developer’s Approach. Addison-Wesley.
+* Apache Cassandra Official Project Documentation (2023-2026) – Case Studies and Core Architectural Guides.

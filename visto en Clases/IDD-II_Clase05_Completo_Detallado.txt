@@ -1,0 +1,158 @@
+========================================================================
+INGENIERÍA DE DATOS II (UADE 2026) - RECONSTRUCCIÓN COMPLETA DE LA CLASE05
+========================================================================
+
+--- DIAPOSITIVA / PÁGINA 1 ---
+Distintos modelos NoSQL
+Comprender el modelo de grafos y utilizar consultas básicas 
+en Cypher para analizar relaciones complejas entre 
+entidades, aplicando este enfoque a escenarios de detección 
+de vínculos ocultos, colusión y fraude.
+MODELOS DE GRAFOS Y 
+ANALISIS DE RELACIONES 
+COMPLEJAS
+2026
+Unidad 2
+Clase 5
+
+--- DIAPOSITIVA / PÁGINA 2 ---
+2026
+MODELO DE GRAFOS
+El modelo de grafos es una forma de organizar y 
+representar datos basada en la teoría de grafos, 
+donde la información se estructura en nodos 
+(entidades) y aristas (relaciones). A diferencia de 
+los modelos relacionales tradicionales (tablas), 
+este modelo prioriza las conexiones entre los 
+datos, permitiendo que las relaciones sean 
+elementos de "primera clase" con sus propias 
+propiedades. 
+Componentes principales
+• Nodos (o Vértices): Representan objetos o entidades, como 
+personas, ciudades o productos.
+• Aristas (o Arcos): Son las líneas que conectan los nodos y 
+representan la relación entre ellos (ej. "amigo de" , "conectado a").
+• Propiedades: Tanto nodos como aristas pueden almacenar 
+información adicional en forma de pares clave-valor.
+
+--- DIAPOSITIVA / PÁGINA 3 ---
+2026
+BDOG 
+–
+ 
+Base de datos orientada a grafos
+Una base de datos orientada a grafos es un 
+sistema que representa la información mediante 
+nodos y relaciones, donde las conexiones entre 
+entidades se almacenan explícitamente y pueden 
+tener propiedades. 
+Este modelo permite consultar y analizar patrones 
+complejos de vínculos, recorrer redes de datos en 
+múltiples niveles y aplicar conceptos de teoría de 
+grafos para detectar relaciones, dependencias y 
+estructuras ocultas, siendo especialmente útil en 
+escenarios con alta interconectividad como 
+fraude, redes sociales, recomendadores y análisis 
+de colusión.
+Propiedades: atributos en formato 
+clave–valor que describen 
+características del dato.
+Relaciones se almacenan 
+explícitamente. 
+Optimizadas para realizar 
+consultas de patrones. 
+
+--- DIAPOSITIVA / PÁGINA 4 ---
+2026
+Componentes
+
+
+--- DIAPOSITIVA / PÁGINA 5 ---
+2026
+¿Qué aporta un grafo?
+• Permite analizar relaciones complejas entre 
+múltiples entidades
+• Facilita recorrer cadenas de vínculos (A → B → C)
+• Detecta conexiones indirectas que no son visibles 
+en datos aislados
+• Identifica entidades aparentemente 
+independientes que comparten elementos
+• Modela naturalmente problemas que se comportan 
+como redes
+• Permite descubrir patrones de comportamiento 
+en lugar de registros individuales
+• Reduce la complejidad de múltiples JOINs en 
+modelos relacionales
+• Facilita el análisis de alta interconectividad de 
+datos
+Casos donde aporta mayor valor
+• Colusión (acuerdos ocultos) entre 
+proveedores
+• Fraude con cuentas compartidas
+• Ocultamiento de beneficiarios 
+finales
+• Empresas vinculadas 
+indirectamente
+• Uso de intermediarios financieros 
+(money mules)
+• Redes de dispositivos asociados a 
+múltiples usuarios
+
+
+--- DIAPOSITIVA / PÁGINA 6 ---
+2026
+Sustantivo 
+–
+ 
+verbo 
+–
+ 
+sustantivo
+
+
+--- DIAPOSITIVA / PÁGINA 7 ---
+2026
+NEO4J
+
+
+--- DIAPOSITIVA / PÁGINA 8 ---
+2026
+Introducción a 
+Cypher
+Cypher es el lenguaje declarativo de Neo4j. 
+“Declarativo” significa que uno describe el 
+patrón que desea encontrar o crear, en lugar 
+de programar paso a paso cómo recorrer la 
+estructura. 
+• Los nodos se escriben entre paréntesis: (p) 
+• Las relaciones se escriben entre corchetes: [r] 
+• La dirección se expresa con flechas: -> o <- 
+• :Label identifica la clase del nodo. 
+• :TIPO_RELACION identifica el tipo de relación. 
+• {} contiene propiedades. 
+• Las variables permiten reutilizar nodos y relaciones 
+dentro de la consulta. 
+(p:Persona)
+(e:Empresa {nombre: 'Alpha SA'})
+(p)-[:SOCIO_DE]->(e)
+
+
+--- DIAPOSITIVA / PÁGINA 9 ---
+Instalación de Cypher – Neo4j
+2026
+Actividad
+Ir a https://neo4j.com/download
+Descargar Neo4j Desktop
+
+
+--- DIAPOSITIVA / PÁGINA 10 ---
+PROXIMA CLASE
+Clase 6 – Clave–valor y procesamiento de alta 
+performance
+Tema:
+Modelo Clave / Valor.
+Redis (commands)
+– Claves, hashes, sets, contadores
+– TTL y ventanas temporales
+– Caché, reglas rápidas y estado
+
