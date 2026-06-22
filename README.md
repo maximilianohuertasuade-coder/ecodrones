@@ -187,9 +187,15 @@ Cuando el sistema detecta temperatura superior a **45°C**, se dispara el protoc
 
 ---
 
-## 📄 Informes
+## 📄 Informes y Presentación
 
-- `informe_etapa_1.html` — Diseño conceptual (Etapa I)
-- `informe_etapa_FINAL.html` — Documento final completo (Etapa Final)
+| Archivo | Contenido |
+|---------|-----------|
+| `informe_etapa_1.html` | Diseño conceptual (Etapa I) |
+| `informe_etapa_FINAL.html` | Documento final completo (Etapa Final) |
+| `Monitoreo-Ambiental-con-Drones.pptx` | Presentación para defensa oral (8 slides) |
+| `Monitoreo-Ambiental-con-Drones.pdf` | Presentación en PDF |
+| `capturas/` | Evidencias de implementación (9 capturas) |
+| `Arquitectura General.png` | Diagrama de arquitectura visual |
 
-Abrir en cualquier navegador para visualizar con formato.
+Abrir los HTML en cualquier navegador para visualizar con formato.
