@@ -11,7 +11,7 @@ MONGO_URI = "mongodb://localhost:27017/"
 DB_NAME = "ecodrones_db"
 COLLECTION_TELEMETRIA = "telemetria"
 COLLECTION_ALERTAS = "alertas_disparadas"
-DRONES = ["DRON_ALPHA", "DRON_BETA", "DRON_GAMMA"]
+DRONES = ["DRON_ALPHA_1", "DRON_ALPHA_2", "DRON_BETA_1", "DRON_BETA_2", "DRON_GAMMA_1", "DRON_GAMMA_2"]
 mongo_client = MongoClient(MONGO_URI)
 col_telemetria = mongo_client[DB_NAME][COLLECTION_TELEMETRIA]
 col_alertas = mongo_client[DB_NAME][COLLECTION_ALERTAS]
@@ -121,45 +121,44 @@ def build_drone_card(doc):
     co2_level = co2_status(co2)
     co2_color_value = co2_color(co2)
 
+    pos_text = f"{lon:.4f}, {lat:.4f}" if lon is not None and lat is not None else "-"
+
     return ft.Container(
         content=ft.Column([
+            # Fila 1: Nombre con punto verde + timestamp
             ft.Row([
-                ft.Text(f"{drone_id}", size=18, weight=ft.FontWeight.BOLD, color="white"),
-                ft.Container(expand=True),
-                ft.Text(format_timestamp(doc.get("timestamp", "")), size=11, color="#888"),
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            ft.Row([
-                ft.Container(width=10, height=10, bgcolor="#2ecc71", border_radius=5),
-                ft.Text("ONLINE", size=10, color="#2ecc71"),
+                ft.Container(width=8, height=8, bgcolor="#2ecc71", border_radius=4),
+                ft.Text(f"{drone_id}", size=14, weight=ft.FontWeight.BOLD, color="white"),
                 ft.Container(expand=True),
                 ft.Text(doc.get("modelo_hardware", ""), size=9, color="#666"),
-            ], spacing=8),
-            ft.Text(f"Zona: {zona}", size=12, color="#99bbff"),
-            ft.Text(f"Posición: {lon if lon is not None else '-'} , {lat if lat is not None else '-'}", size=11, color="#cccccc"),
-            ft.Divider(color="#2a2a3a"),
+            ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            # Fila 2: Zona + Posición en la misma línea
             ft.Row([
-                sensor_box("TEMPERATURA", f"{temp}°C", "", temp_color, level),
+                ft.Text(f"{zona}", size=11, color="#99bbff", weight=ft.FontWeight.BOLD),
+                ft.Text(f"({pos_text})", size=10, color="#888"),
+                ft.Container(expand=True),
+                ft.Text(f"Bat: {bat}%", size=10, color="#bbbbbb"),
+            ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            ft.Divider(color="#2a2a3a", height=1),
+            # Sensores principales
+            ft.Row([
+                sensor_box("TEMP", f"{temp}°C", "", temp_color, level),
                 sensor_box("CO2", f"{co2}", "ppm", co2_color_value, co2_level),
-                sensor_box("HUMEDAD", f"{hum}", "%", "#4fc3f7", None),
-                sensor_box("VIENTO", f"{viento}", "km/h", "#9b59b6", f"Dir {vdir}°"),
-            ], spacing=10),
+                sensor_box("HUM", f"{hum}", "%", "#4fc3f7", None),
+                sensor_box("VIENTO", f"{viento}", "km/h", "#9b59b6", f"{vdir}°"),
+            ], spacing=6),
             # Sensores adicionales (solo si existen en el documento — esquema flexible)
             ft.Row([
                 sensor_box("UV", f"{lec.get('radiacion_uv_indice', '-')}", "idx", "#ff7043", None) if lec.get("radiacion_uv_indice") else ft.Container(),
                 sensor_box("PRESIÓN", f"{lec.get('presion_atmosferica_hpa', '-')}", "hPa", "#42a5f5", None) if lec.get("presion_atmosferica_hpa") else ft.Container(),
                 sensor_box("LUZ", f"{lec.get('luminosidad_lux', '-')}", "lux", "#ffca28", None) if lec.get("luminosidad_lux") else ft.Container(),
                 sensor_box("PM2.5", f"{lec.get('particulas_pm25_ugm3', '-')}", "μg/m³", "#ab47bc", None) if lec.get("particulas_pm25_ugm3") else ft.Container(),
-            ], spacing=10) if any(lec.get(k) for k in ("radiacion_uv_indice", "presion_atmosferica_hpa", "luminosidad_lux", "particulas_pm25_ugm3")) else ft.Container(),
-            ft.Row([
-                ft.Text(f"Batería: {bat}%", size=11, color="#bbbbbb"),
-                ft.Container(expand=True),
-                ft.Text("Datos en vivo desde MongoDB", size=11, color="#888"),
-            ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
-        ], spacing=12),
+            ], spacing=6) if any(lec.get(k) for k in ("radiacion_uv_indice", "presion_atmosferica_hpa", "luminosidad_lux", "particulas_pm25_ugm3")) else ft.Container(),
+        ], spacing=8),
         bgcolor="#181832",
         border=ft.border.Border.all(1, "#333"),
-        border_radius=16,
-        padding=ft.Padding.symmetric(horizontal=18, vertical=18),
+        border_radius=12,
+        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         expand=True,
     )
 
@@ -323,11 +322,11 @@ def build_route_map(alpha_docs, beta_docs, gamma_docs=[]):
         ))
 
     if alpha_point:
-        add_route_point(alpha_point, "#4cd964", "DRON_ALPHA")
+        add_route_point(alpha_point, "#4cd964", "ALPHA")
     if beta_point:
-        add_route_point(beta_point, "#ff9500", "DRON_BETA")
+        add_route_point(beta_point, "#ff9500", "BETA")
     if gamma_point:
-        add_route_point(gamma_point, "#3498db", "DRON_GAMMA")
+        add_route_point(gamma_point, "#3498db", "GAMMA")
 
     return ft.Container(
         content=ft.Stack(controls, width=W, height=H),
@@ -370,15 +369,15 @@ def build_route_tab(alpha_docs, beta_docs, gamma_docs=[]):
             ft.Row([
                 ft.Row([
                     ft.Container(width=10, height=10, bgcolor="#2ecc71", border_radius=5),
-                    ft.Text(" DRON_ALPHA online", size=11, color="#ccc"),
+                    ft.Text(" ALPHA_1/2 online", size=11, color="#ccc"),
                 ], spacing=4),
                 ft.Row([
                     ft.Container(width=10, height=10, bgcolor="#2ecc71", border_radius=5),
-                    ft.Text(" DRON_BETA online", size=11, color="#ccc"),
+                    ft.Text(" BETA_1/2 online", size=11, color="#ccc"),
                 ], spacing=4),
                 ft.Row([
                     ft.Container(width=10, height=10, bgcolor="#2ecc71", border_radius=5),
-                    ft.Text(" DRON_GAMMA online", size=11, color="#ccc"),
+                    ft.Text(" GAMMA_1/2 online", size=11, color="#ccc"),
                 ], spacing=4),
             ], spacing=10),
         ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
@@ -453,17 +452,18 @@ def main(page: ft.Page):
     status_dot = ft.Container(width=10, height=10, bgcolor="#2ecc71", border_radius=5)
     status_text = ft.Text("Sistema Operativo", size=12, color="#bbbbbb")
 
-    drone_cards = ft.Row([], spacing=16, expand=True)
+    drone_col_alpha = ft.Column([], spacing=10, expand=True)
+    drone_col_beta = ft.Column([], spacing=10, expand=True)
+    drone_col_gamma = ft.Column([], spacing=10, expand=True)
+    drone_cards = ft.Row([drone_col_alpha, drone_col_beta, drone_col_gamma], spacing=12, expand=True)
 
     def open_neo4j(e):
         import webbrowser
         webbrowser.open("http://localhost:7474")
 
     header = ft.Row([
-        ft.Column([
-            ft.Text("EcoDrones", size=24, weight=ft.FontWeight.BOLD, color="white"),
-            ft.Text("Monitoreo Táctico: Área Capilla del Monte / Cerro Uritorco", size=12, color="#aaaaaa"),
-        ]),
+        ft.Text("EcoDrones", size=22, weight=ft.FontWeight.BOLD, color="white"),
+        ft.Text("(Monitoreo Táctico: Capilla del Monte / Cerro Uritorco)", size=12, color="#aaaaaa"),
         ft.Container(expand=True),
         ft.Button(
             "Neo4j Browser",
@@ -474,7 +474,7 @@ def main(page: ft.Page):
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
         ),
         ft.Row([status_dot, status_text], spacing=8),
-    ], vertical_alignment=ft.CrossAxisAlignment.CENTER)
+    ], vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
 
     route_container = ft.Container(
         content=ft.Column([ft.Text("Cargando mapa de recorrido...", size=12, color="#999")]),
@@ -550,16 +550,16 @@ def main(page: ft.Page):
         ], spacing=20, expand=True), expand=True
     )
 
-    dron_alpha_sat = ft.Container(animate_position=1000)
-    dron_beta_sat = ft.Container(animate_position=1000)
-    dron_gamma_sat = ft.Container(animate_position=1000)
+    dron_sat_markers = {}
+    for d in DRONES:
+        dron_sat_markers[d] = ft.Container(animate_position=1000)
 
     # Capa de destello rojo para emergencias en Zona 3
     flash_zona_3 = ft.Container(bgcolor="red", opacity=0.0, expand=True, animate_opacity=300)
 
     # Contenedores dinámicos para múltiples fuegos y humos en Zona 3
-    fuegos_z3_container = ft.Stack(width=150, height=100, left=490, top=50)
-    humos_z3_container = ft.Stack(width=150, height=100, left=485, top=30)
+    fuegos_z3_container = ft.Stack(width=200, height=150, left=470, top=40)
+    humos_z3_container = ft.Stack(width=220, height=160, left=460, top=10)
     
     # Los demás iconos se mantienen individuales por si acaso, pero Z3 es un Stack
     fire_icons_sat = {
@@ -630,9 +630,7 @@ def main(page: ft.Page):
                         *smoke_icons_sat.values(),
                         *[v for k,v in fire_icons_sat.items() if k != "ZONA_003"],
                         fuegos_z3_container,
-                        dron_alpha_sat,
-                        dron_beta_sat,
-                        dron_gamma_sat
+                        *[dron_sat_markers[d] for d in DRONES]
                     ]),
                     width=650,
                     height=450,
@@ -642,9 +640,12 @@ def main(page: ft.Page):
                 ),
                 ft.Column([
                     ft.Text("ESTADO DE MISIÓN", size=12, weight="bold", color="#555577"),
-                    ft.Row([ft.Container(width=10, height=10, bgcolor="#4cd964", border_radius=5), ft.Text("ALPHA: Patrullando", size=12)]),
-                    ft.Row([ft.Container(width=10, height=10, bgcolor="#ff9500", border_radius=5), ft.Text("BETA: Respaldo", size=12)]),
-                    ft.Row([ft.Container(width=10, height=10, bgcolor="#3498db", border_radius=5), ft.Text("GAMMA: Patrullando", size=12)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#4cd964", border_radius=5), mission_alpha1_text := ft.Text("ALPHA_1: ---", size=11)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#2d8f3e", border_radius=5), mission_alpha2_text := ft.Text("ALPHA_2: ---", size=11)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#ff9500", border_radius=5), mission_beta1_text := ft.Text("BETA_1: ---", size=11)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#cc7700", border_radius=5), mission_beta2_text := ft.Text("BETA_2: ---", size=11)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#3498db", border_radius=5), mission_gamma1_text := ft.Text("GAMMA_1: ---", size=11)]),
+                    ft.Row([ft.Container(width=10, height=10, bgcolor="#1a6fa8", border_radius=5), mission_gamma2_text := ft.Text("GAMMA_2: ---", size=11)]),
                     ft.Divider(color="#2a2a3a"),
                     leyenda_mapa,
                 ], spacing=10, width=200)
@@ -785,8 +786,10 @@ def main(page: ft.Page):
             y = (GEO_LAT_MAX - lat) / (GEO_LAT_MAX - GEO_LAT_MIN) * height
             return x, y
 
-        drone_cards.controls.clear()
-        for drone_id in DRONES:
+        drone_col_alpha.controls.clear()
+        drone_col_beta.controls.clear()
+        drone_col_gamma.controls.clear()
+        for i, drone_id in enumerate(DRONES):
             doc = latest.get(drone_id)
             
             # Actualizar posición en el Mapa Satelital si hay coordenadas
@@ -810,52 +813,93 @@ def main(page: ft.Page):
                     elif co2 < 1500: c_color = "#e67e22"
                     else: c_color = "#4b0082" # Violeta Oscuro para CO2 Crítico
                     
-                    accent = "#4cd964" if drone_id == "DRON_ALPHA" else "#ff9500"
+                    accent_colors = {
+                        "DRON_ALPHA_1": "#4cd964", "DRON_ALPHA_2": "#2d8f3e",
+                        "DRON_BETA_1": "#ff9500", "DRON_BETA_2": "#cc7700",
+                        "DRON_GAMMA_1": "#3498db", "DRON_GAMMA_2": "#1a6fa8",
+                    }
+                    accent = accent_colors.get(drone_id, "#4cd964")
                     
                     # --- LÓGICA DE ARO DINÁMICO SEGÚN CO2 ---
                     # El tamaño base es 30, y crece hasta 70 si el CO2 es muy alto
                     c_size = 30 + (min(co2, 2000) - 400) / 1600 * 40
                     
                     # Marcadores dinámicos sobre el dron según lectura actual
+                    is_danger = temp > 35  # Cerca de zona peligrosa
                     fuego_dron = ft.Icon(ft.Icons.LOCAL_FIRE_DEPARTMENT, color="#ff4500", size=20, top=-20, left=c_size/2-10) if temp > 45 else ft.Container()
                     humo_dron = ft.Icon(ft.Icons.CLOUD, color="#555555", size=22, top=-25, left=c_size/2+5) if co2 > 800 else ft.Container()
+                    danger_icon = ft.Icon(ft.Icons.WARNING_AMBER, color="#ffab00", size=16, top=-16, left=c_size/2+12) if is_danger else ft.Container()
 
                     # Actualizar el contenido visual del marcador
+                    short_name = drone_id.replace("DRON_", "")
                     new_marker = ft.Stack([
                         ft.Container(width=c_size, height=c_size, border_radius=c_size/2, border=ft.border.Border.all(2, c_color), animate=500),
                         ft.Container(width=12, height=12, border_radius=6, bgcolor=t_color, border=ft.border.Border.all(2, accent), left=c_size/2-6, top=c_size/2-6),
-                        ft.Text(drone_id.split("_")[1], size=10, weight="bold", color="white", top=-15, left=c_size/2-15),
+                        ft.Container(
+                            content=ft.Text(short_name, size=9, weight="bold", color="white", text_align=ft.TextAlign.CENTER,
+                                          bgcolor="#000000", ),
+                            top=-22, left=c_size/2-32, width=64,
+                            bgcolor="#00000088",
+                            border_radius=4,
+                            padding=ft.Padding.symmetric(horizontal=2, vertical=1),
+                        ),
+                        danger_icon,
                         fuego_dron,
                         humo_dron
                     ])
 
-                    if drone_id == "DRON_ALPHA":
-                        dron_alpha_sat.left, dron_alpha_sat.top = x - c_size/2, y - c_size/2
-                        dron_alpha_sat.content = new_marker
-                    elif drone_id == "DRON_BETA":
-                        dron_beta_sat.left, dron_beta_sat.top = x - c_size/2, y - c_size/2
-                        dron_beta_sat.content = new_marker
-                    elif drone_id == "DRON_GAMMA":
-                        dron_gamma_sat.left, dron_gamma_sat.top = x - c_size/2, y - c_size/2
-                        dron_gamma_sat.content = new_marker
+                    dron_sat_markers[drone_id].left = x - c_size/2
+                    dron_sat_markers[drone_id].top = y - c_size/2
+                    dron_sat_markers[drone_id].content = new_marker
 
-            if doc:
-                drone_cards.controls.append(build_drone_card(doc))
+            if "ALPHA" in drone_id:
+                target_col = drone_col_alpha
+            elif "BETA" in drone_id:
+                target_col = drone_col_beta
             else:
-                drone_cards.controls.append(
+                target_col = drone_col_gamma
+            if doc:
+                target_col.controls.append(build_drone_card(doc))
+            else:
+                target_col.controls.append(
                     ft.Container(
                         content=ft.Text(f"No hay datos para {drone_id}", size=12, color="#999"),
                         bgcolor="#181832",
                         border=ft.border.Border.all(1, "#333"),
-                        border_radius=16,
-                        padding=ft.Padding.symmetric(horizontal=18, vertical=18),
+                        border_radius=12,
+                        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
                         expand=True,
                     )
                 )
 
-        alpha_docs = list(col_telemetria.find({"drone_id": "DRON_ALPHA"}).sort([("_id", -1)]).limit(20))
-        beta_docs = list(col_telemetria.find({"drone_id": "DRON_BETA"}).sort([("_id", -1)]).limit(20))
-        gamma_docs = list(col_telemetria.find({"drone_id": "DRON_GAMMA"}).sort([("_id", -1)]).limit(20))
+        # Actualizar estado de misión con zona actual de cada dron
+        mission_texts = {
+            "DRON_ALPHA_1": mission_alpha1_text, "DRON_ALPHA_2": mission_alpha2_text,
+            "DRON_BETA_1": mission_beta1_text, "DRON_BETA_2": mission_beta2_text,
+            "DRON_GAMMA_1": mission_gamma1_text, "DRON_GAMMA_2": mission_gamma2_text,
+        }
+        for did, mtxt in mission_texts.items():
+            doc = latest.get(did)
+            short = did.replace("DRON_", "")
+            if doc:
+                zona = doc.get("cod_zona", "?")
+                temp_val = doc.get("lecturas_sensores", {}).get("temperatura_c", 0)
+                if temp_val > 45:
+                    mtxt.value = f"{short}: ⚠️ ALERTA {zona}"
+                    mtxt.color = "#ff4444"
+                elif temp_val > 35:
+                    mtxt.value = f"{short}: {zona} (elevado)"
+                    mtxt.color = "#ffaa00"
+                else:
+                    mtxt.value = f"{short}: {zona}"
+                    mtxt.color = "white"
+            else:
+                mtxt.value = f"{short}: sin datos"
+                mtxt.color = "#666"
+
+        alpha_docs = list(col_telemetria.find({"drone_id": {"$in": ["DRON_ALPHA_1", "DRON_ALPHA_2"]}}).sort([("_id", -1)]).limit(20))
+        beta_docs = list(col_telemetria.find({"drone_id": {"$in": ["DRON_BETA_1", "DRON_BETA_2"]}}).sort([("_id", -1)]).limit(20))
+        gamma_docs = list(col_telemetria.find({"drone_id": {"$in": ["DRON_GAMMA_1", "DRON_GAMMA_2"]}}).sort([("_id", -1)]).limit(20))
         route_map = build_route_map(list(reversed(alpha_docs)), list(reversed(beta_docs)), list(reversed(gamma_docs)))
         route_container.content = route_map
 
@@ -908,18 +952,19 @@ def main(page: ft.Page):
             # Lógica especial para multiplicar fuegos en Zona 3
             if "ZONA_003" in active_fire_zones:
                 if flicker_state[0] and len(fuegos_z3_container.controls) < 8:
-                    # Añadimos un fuego y un humo nuevo desplazados a la izquierda
-                    offset_x = len(fuegos_z3_container.controls) * 15
+                    # Añadimos un fuego y un humo nuevo distribuidos dentro del contenedor
+                    idx = len(fuegos_z3_container.controls)
+                    offset_x = idx * 18
                     
-                    # Agregar Fuego
+                    # Agregar Fuego (centrado dentro del contenedor de 200px)
                     fuegos_z3_container.controls.append(
                         ft.Icon(ft.Icons.LOCAL_FIRE_DEPARTMENT, color="#ff4500", size=30, 
-                               left=50 - offset_x, top=30 + random.randint(-10, 10), animate_scale=600)
+                               left=90 - offset_x + random.randint(-5, 5), top=60 + random.randint(-10, 10), animate_scale=600)
                     )
-                    # Agregar Humo (un poco más grande y arriba que el fuego)
+                    # Agregar Humo (centrado dentro del contenedor de 220px, arriba de los fuegos)
                     humos_z3_container.controls.append(
                         ft.Icon(ft.Icons.CLOUD, color="#555555", size=45, 
-                               left=45 - offset_x, top=15 + random.randint(-15, 15), animate_opacity=1000)
+                               left=95 - offset_x + random.randint(-5, 5), top=50 + random.randint(-10, 10), animate_opacity=1000)
                     )
 
             for zid, icon in fire_icons_sat.items():
@@ -1236,7 +1281,7 @@ def main(page: ft.Page):
                         content=ft.Row([
                             ft.Icon(ft.Icons.FLIGHT, color="#3498db", size=22),
                             ft.Column([
-                                ft.Text("REDIRIGIR DRON_GAMMA", size=12, weight="bold", color="#3498db"),
+                                ft.Text("REDIRIGIR DRON_GAMMA_1", size=12, weight="bold", color="#3498db"),
                                 ft.Text(f"Enviar dron de patrullaje a vigilar {salto1_nombre} para confirmar propagación.", size=10, color="#aaa"),
                             ], spacing=2, expand=True),
                             ft.Container(

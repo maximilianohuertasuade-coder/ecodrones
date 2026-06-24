@@ -38,12 +38,16 @@ START_LAT = -30.85625
 
 # Lon_base calculada como centro de cada par de zonas (Oeste, Centro, Este)
 drones_estado = {
-    # Alpha: ZONA_001 (N) <-> ZONA_004 (S). Lon: -64.5341
-    "DRON_ALPHA": {"lon_base": -64.5341, "lat": -30.851, "dir": -1, "v": 0.00025, "offset": 0.0, "t": 0.0},
-    # Beta: ZONA_005 (S) <-> ZONA_002 (N). Lon: -64.5224
-    "DRON_BETA":  {"lon_base": -64.5224, "lat": -30.874, "dir": 1,  "v": 0.00030, "offset": 0.0, "t": 2.0},
-    # Gamma: ZONA_006 (S) <-> ZONA_003 (N). Lon: -64.5108
-    "DRON_GAMMA": {"lon_base": -64.5108, "lat": -30.874, "dir": 1,  "v": 0.00020, "offset": 0.0, "t": 4.0}
+    # Circuito Oeste: ZONA_001 (N) <-> ZONA_004 (S)
+    # Los dos ALPHA se separan lateralmente ~0.003° (~300m) para no solaparse
+    "DRON_ALPHA_1": {"lon_base": -64.5360, "lat": -30.8530, "dir": -1, "v": 0.00008, "offset": 0.0, "t": 0.0},
+    "DRON_ALPHA_2": {"lon_base": -64.5320, "lat": -30.8710, "dir": 1,  "v": 0.00008, "offset": 0.0, "t": 0.0},
+    # Circuito Centro: ZONA_002 (N) <-> ZONA_005 (S)
+    "DRON_BETA_1":  {"lon_base": -64.5240, "lat": -30.8540, "dir": -1, "v": 0.00009, "offset": 0.0, "t": 2.0},
+    "DRON_BETA_2":  {"lon_base": -64.5200, "lat": -30.8720, "dir": 1,  "v": 0.00009, "offset": 0.0, "t": 2.0},
+    # Circuito Este: ZONA_003 (N) <-> ZONA_006 (S)
+    "DRON_GAMMA_1": {"lon_base": -64.5125, "lat": -30.8550, "dir": -1, "v": 0.00007, "offset": 0.0, "t": 4.0},
+    "DRON_GAMMA_2": {"lon_base": -64.5085, "lat": -30.8700, "dir": 1,  "v": 0.00007, "offset": 0.0, "t": 4.0}
 }
 
 ACTIVE_FIRE_ZONES = {"ZONA_003"} # FOCO ÚNICO PERMANENTE EN ZONA 3
@@ -56,11 +60,11 @@ try:
             # Movimiento lineal vertical con rebote
             estado["lat"] += estado["v"] * estado["dir"]
             
-            # Al tocar los bordes (Norte: -30.851, Sur: -30.874), invierte y desplaza
-            if estado["lat"] <= -30.874 or estado["lat"] >= -30.851:
+            # Al tocar los bordes (Norte: -30.852, Sur: -30.873), invierte y desplaza
+            if estado["lat"] <= -30.873 or estado["lat"] >= -30.852:
                 estado["dir"] *= -1
-                # Desplazamiento lateral suave para no repetir camino (reducido para evitar saltos)
-                estado["offset"] = random.uniform(-0.0008, 0.0008)
+                # Desplazamiento lateral mínimo para simular corrección de rumbo
+                estado["offset"] = random.uniform(-0.0003, 0.0003)
             
             current_lat = estado["lat"]
             current_lon = estado["lon_base"] + estado["offset"]
@@ -106,9 +110,12 @@ try:
             # 5. ARMADO DEL DOCUMENTO CON ESTÁNDAR IOT GEOJSON
             # Modelo de hardware diferenciado por dron
             modelos_hw = {
-                "DRON_ALPHA": "Hexacopter-V2-Eco",
-                "DRON_BETA": "Hexacopter-V3-Pro",
-                "DRON_GAMMA": "Quadcopter-X1-Scout",
+                "DRON_ALPHA_1": "Hexacopter-V2-Eco",
+                "DRON_ALPHA_2": "Hexacopter-V2-Eco",
+                "DRON_BETA_1": "Hexacopter-V3-Pro",
+                "DRON_BETA_2": "Hexacopter-V3-Pro",
+                "DRON_GAMMA_1": "Quadcopter-X1-Scout",
+                "DRON_GAMMA_2": "Quadcopter-X1-Scout",
             }
 
             payload_telemetria = {
@@ -131,7 +138,7 @@ try:
             }
 
             # SENSORES ADICIONALES POR MODELO (esquema flexible — demuestra ventaja NoSQL)
-            if drone_id == "DRON_BETA":
+            if drone_id in ("DRON_BETA_1", "DRON_BETA_2"):
                 # Beta tiene sensor UV y barómetro
                 payload_telemetria["lecturas_sensores"]["radiacion_uv_indice"] = round(
                     3.0 + (5.0 * factor_fuego) + random.uniform(-0.3, 0.3), 1
@@ -139,7 +146,7 @@ try:
                 payload_telemetria["lecturas_sensores"]["presion_atmosferica_hpa"] = round(
                     1013.25 - (current_lat + 30.87) * 100 + random.uniform(-0.5, 0.5), 1
                 )
-            elif drone_id == "DRON_GAMMA":
+            elif drone_id in ("DRON_GAMMA_1", "DRON_GAMMA_2"):
                 # Gamma tiene sensor de luminosidad y detector de partículas PM2.5
                 payload_telemetria["lecturas_sensores"]["luminosidad_lux"] = round(
                     max(50, 800 - (600 * factor_fuego) + random.uniform(-20, 20)), 1
@@ -152,15 +159,17 @@ try:
             coleccion_telemetria.insert_one(payload_telemetria)
             
             # Imprimir traza en consola para verificar que se está moviendo bien
-            color_traza = "\033[91m🔥" if temperatura > 45.0 else "\033[92m🟢"
+            indicador = "!! ALERTA" if temperatura > 45.0 else "OK"
             extra_info = ""
-            if drone_id == "DRON_BETA":
-                extra_info = f" | UV: {payload_telemetria['lecturas_sensores']['radiacion_uv_indice']} | Presión: {payload_telemetria['lecturas_sensores']['presion_atmosferica_hpa']} hPa"
-            elif drone_id == "DRON_GAMMA":
-                extra_info = f" | Luz: {payload_telemetria['lecturas_sensores']['luminosidad_lux']} lux | PM2.5: {payload_telemetria['lecturas_sensores']['particulas_pm25_ugm3']} μg/m³"
-            print(f"{color_traza} [{drone_id}] en {zona_actual} ({ZONAS_GPS[zona_actual]['nombre']}) -> "
-                  f"Temp: {round(temperatura, 1)}°C | CO2: {round(co2, 1)} ppm | Viento: {round(viento_velocidad, 1)} km/h a {round(viento_direccion, 0)}°{extra_info}\033[0m")
+            if drone_id in ("DRON_BETA_1", "DRON_BETA_2"):
+                extra_info = f"\n      UV: {payload_telemetria['lecturas_sensores']['radiacion_uv_indice']} | Presion: {payload_telemetria['lecturas_sensores']['presion_atmosferica_hpa']} hPa"
+            elif drone_id in ("DRON_GAMMA_1", "DRON_GAMMA_2"):
+                extra_info = f"\n      Luz: {payload_telemetria['lecturas_sensores']['luminosidad_lux']} lux | PM2.5: {payload_telemetria['lecturas_sensores']['particulas_pm25_ugm3']} ug/m3"
+            print(f"  [{indicador}] {drone_id} | {zona_actual} ({ZONAS_GPS[zona_actual]['nombre']})"
+                  f"\n      Temp: {round(temperatura, 1)}C | CO2: {round(co2, 1)} ppm | Hum: {round(humedad, 1)}%"
+                  f" | Viento: {round(viento_velocidad, 1)} km/h a {round(viento_direccion, 0)} grados{extra_info}")
             
+        print(f"  {'_'*70}")
         # Esperamos 1 segundo exacto antes de la próxima ráfaga de telemetría
         time.sleep(1.0)
 

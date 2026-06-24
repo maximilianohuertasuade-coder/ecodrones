@@ -28,10 +28,13 @@ CREATE (e5:Especie {especie_id: 'ESP_05', nombre_comun: 'Vizcacha Serrana', nomb
 CREATE (e6:Especie {especie_id: 'ESP_06', nombre_comun: 'Lagarto Overo', nombre_cientifico: 'Salvator merianae', categoria_iucn: 'LC'})
 CREATE (e7:Especie {especie_id: 'ESP_07', nombre_comun: 'Remolinera Serrana', nombre_cientifico: 'Cinclodes comechingonus', categoria_iucn: 'NT'})
 
-// 3. Creación de Drones para el modelo
-CREATE (d1:Dron {drone_id: 'DRON_ALPHA', estado: 'activo', ultimo_timestamp: '', nota: 'Dron piloto de monitoreo'})
-CREATE (d2:Dron {drone_id: 'DRON_BETA', estado: 'activo', ultimo_timestamp: '', nota: 'Dron secundario de respaldo'})
-CREATE (d3:Dron {drone_id: 'DRON_GAMMA', estado: 'activo', ultimo_timestamp: '', nota: 'Dron de patrullaje de altura'})
+// 3. Creación de Drones para el modelo (6 drones: 2 por circuito)
+CREATE (d1:Dron {drone_id: 'DRON_ALPHA_1', estado: 'activo', ultimo_timestamp: '', nota: 'Dron piloto circuito Oeste'})
+CREATE (d2:Dron {drone_id: 'DRON_ALPHA_2', estado: 'activo', ultimo_timestamp: '', nota: 'Dron respaldo circuito Oeste'})
+CREATE (d3:Dron {drone_id: 'DRON_BETA_1', estado: 'activo', ultimo_timestamp: '', nota: 'Dron piloto circuito Centro'})
+CREATE (d4:Dron {drone_id: 'DRON_BETA_2', estado: 'activo', ultimo_timestamp: '', nota: 'Dron respaldo circuito Centro'})
+CREATE (d5:Dron {drone_id: 'DRON_GAMMA_1', estado: 'activo', ultimo_timestamp: '', nota: 'Dron piloto circuito Este'})
+CREATE (d6:Dron {drone_id: 'DRON_GAMMA_2', estado: 'activo', ultimo_timestamp: '', nota: 'Dron respaldo circuito Este'})
 
 // 4. Relaciones Topológicas con Orientación de Vientos (Para el Algoritmo Predictivo)
 // Relaciones Horizontales (Oeste <-> Este)
